@@ -1,8 +1,8 @@
-# Techwise Summer Project
+# Shoot People 2D (Techwise Summer Project)
 
 ## Dependencies
 - Python
-- PyGame
+- Pygame
 
 ## Directions
 Run with the following:
