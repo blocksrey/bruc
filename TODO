@@ -1,0 +1,27 @@
+- Graphics class:
+    Draw textures
+    Draw primitives (rectangles, circles, etc.)
+
+- Input handling
+    Key presses
+    Mouse inputs
+
+- Network class:
+    Peer-to-peer connections
+
+- Vector class (vec2)
+    Matrix by vector
+    Number by vector
+    Vector by vector
+
+- Character controller class
+    Jump
+    Walk
+    Move around
+
+- Representation of geometry (How will maps be stored?):
+    Be able to collide with maps with little computation (geometry traversal)
+    Be able to render maps easily
+
+- Camera class (for viewing the world):
+    Follow the player with camera
