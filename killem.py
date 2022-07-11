@@ -1,27 +1,15 @@
-print('Start Killem 2D Client')
+print("Start Killem 2D Client")
 
-import net_c
+import pyglet
+from pyglet.gl import *
 
-#win = pyglet.window.Window(
-#	width = 800,
-#	height = 600,
-#	caption = 'Killem 2D'
-#)
+pyglet.window.Window(800, 600, "Killem 2D")
 
-#pyglet.gl.glViewport(0, 0, 800, 600)
+glViewport(0, 0, 800, 600)
 
-#pyglet.graphics.draw_indexed(
-#	3,
-#	pyglet.gl.GL_TRIANGLES,
-#	[0, 1, 2],
-#	(
-#		'v2i',
-#		(
-#			0, 0,
-#			1, 1,
-#			0, 1
-#		)
-#	)
-#)
+from vec2 import vec2
+from vec3 import vec3
+from gl import draw_rect
+draw_rect(vec2(0, 0), vec2(1, 1), vec3(1, 0, 1))
 
-#pyglet.app.run()
+pyglet.app.run()
