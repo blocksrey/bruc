@@ -2,25 +2,9 @@
     Draw textures
     Draw primitives (rectangles, circles, etc.)
 
-
 - Input handling
     Key presses
     Mouse inputs
-
-
-- Network class:
-    Peer-to-peer connections
-
-
-- Matrix class (mat2x2)
-    mat2(
-        xx, yx,
-        xy, yy
-    )
-
-    determinant
-    inverse
-
 
 - Vector class (vec2)
     vec2(x, y)
@@ -29,30 +13,20 @@
 
     dot product (ax*ay + bx*by)
 
-    # vector by vector
-    addition of vectors (vector + vector)
-    subtraction of vectors (vector - vector)
-
     # number by vector
     (vector + number)
     (vector - number)
     (number*vector)
     (vector/number)
 
-
-
 - Character controller class
     Jump
     Walk
     Move around
 
-
-
 - Representation of geometry (How will maps be stored?):
     Be able to collide with maps with little computation (geometry traversal)
     Be able to render maps easily
-
-
 
 - Camera class (for viewing the world):
     Follow the player with camera
