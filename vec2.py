@@ -14,22 +14,22 @@ class vec2:
 		return vec2(a.x - b.x, a.y - b.y)
 
 	def __mul__(a, b):
-		return vec2(a.x * b.x, a.y * b.y)
+		return vec2(a.x*b.x, a.y*b.y)
 
 	def __div__(a, b):
-		return vec2(a.x / b.x, a.y / b.y)
+		return vec2(a.x/b.x, a.y/b.y)
 
 	def __repr__(a):
 		return repr((a.x, a.y))
 
 	def dot(a, b):
-		return a.x * b.x + a.y * b.y
+		return a.x*b.x + a.y*b.y
 
 	def __neg__(a):
 		return vec2(-a.x, -a.y)
 
 	def __mod__(a, b):
-		return vec2(a.x % b, a.y % b)
+		return vec2(a.x%b, a.y%b)
 
 	def __abs__(a):
 		return sqrt(a.x*a.x + a.y*a.y)

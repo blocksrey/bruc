@@ -9,7 +9,7 @@ def talk():
 		nQueue(input())
 Thread(target = talk).start()
 
-sock_t = socket.socket() # AF_INET, SOCK_STREAM
+sock_t = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # AF_INET, SOCK_STREAM
 sock_t.connect(("localhost", 0xDEAD))
 
 

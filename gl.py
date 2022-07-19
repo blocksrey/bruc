@@ -1,6 +1,6 @@
-from pyglet.graphics import draw
-from pyglet.gl import *
 from vec3 import vec3
+from pyglet.graphics import draw
+from pyglet.gl import GL_TRIANGLES
 
 # p0 + (tx, ty)*s : 0 <= tx < 1 && 0 <= ty < 1
 def draw_rect(p0, s, c):
