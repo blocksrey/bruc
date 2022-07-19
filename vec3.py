@@ -22,9 +22,6 @@ class vec3:
 	def __repr__(a):
 		return repr((a.x, a.y, a.z))
 
-	def dot(a, b):
-		return a.x*b.x + a.y*b.y + a.z*b.z
-
 	def __neg__(a):
 		return vec3(-a.x, -a.y, -a.z)
 
@@ -33,3 +30,6 @@ class vec3:
 
 	def __abs__(a):
 		return sqrt(a.x*a.x + a.y*a.y + a.z*a.z)
+
+	def dot(a, b):
+		return a.x*b.x + a.y*b.y + a.z*b.z

@@ -1,45 +1,32 @@
 from serial import serialize, deserialize
 from threading import Thread
+from signal import signal
 
-BUFFER_SIZE = 1024 # this is probably enough
+BUFFER_SIZE = 512
 
-def Network():
-	queue = []
+class network:
+	# should these be created with __init__? idk
+	socks = {}
 
-	def connect(sock_t):
-		addr_t = sock_t.getpeername()
-		iscon = 1
+	onconnect = signal()
+	onclose = signal()
+	onreceive = signal()
 
-		def begin():
-			print("connect", addr_t)
+	def connect(self, sock):
+		def doodoo():
+			self.socks[sock] = None
 
-			while stream_i := sock_t.recv(BUFFER_SIZE):
-				print(addr_t, deserialize(stream_i))
+			self.onconnect.fire(sock)
+			while stream := sock.recv(BUFFER_SIZE):
+				self.onreceive.fire(sock, deserialize(stream))
+			self.onclose.fire(sock)
 
-			print("close", addr_t)
+			del self.socks[sock]
 
-			# disable connection state
-			nonlocal iscon
-			iscon = 0
+			sock.close()
 
-			sock_t.close()
+		Thread(target = doodoo).start()
 
-		Thread(target = begin).start()
-
-		def comm():
-			# run communications while connected
-			while iscon:
-				nonlocal queue
-				if len(queue):
-					sock_t.send(serialize(queue)) # this prevents an entire paradox
-					queue = []
-
-			print("comms ended")
-
-		Thread(target = comm).start()
-
-	def enqueue(stuff):
-		nonlocal queue
-		queue.append(stuff)
-
-	return connect, enqueue
+	def send(self, stuff):
+		for sock in self.socks:
+			sock.send(serialize(stuff))

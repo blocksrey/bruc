@@ -1,7 +1,7 @@
-from json import loads, dumps
+from json import loads, dumps # this works for now :/
 
-def serialize(yup):
-	return dumps(yup).encode()
+def serialize(stuff):
+	return dumps(stuff).encode()
 
-def deserialize(wow):
-	return loads(wow.decode())
+def deserialize(cantread):
+	return loads(cantread.decode())
