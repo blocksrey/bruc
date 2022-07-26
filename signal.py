@@ -1,4 +1,4 @@
-class signal:
+class Signal:
 	def __init__(self):
 		self.callbacks = {}
 

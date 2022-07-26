@@ -1,16 +1,16 @@
 import socket
-from network import network
+from network import Network
 from threading import Thread
 
-network0 = network()
+network0 = Network()
 
 def talk():
 	while 1:
 		network0.send(input())
 Thread(target = talk).start()
 
-sock_t = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # AF_INET, SOCK_STREAM
-sock_t.connect(("localhost", 0xDEAD))
+socket0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # AF_INET, SOCK_STREAM
+socket0.connect(("localhost", 0xDEAD))
 
 
 
@@ -18,17 +18,17 @@ sock_t.connect(("localhost", 0xDEAD))
 
 
 
-def onconnect(sock):
-	print("CONNECT", sock)
-onconnectcon = network0.onconnect.connect(onconnect)
+def on_connect(socket):
+	print("CONNECT", socket)
+on_connectcon = network0.on_connect.connect(on_connect)
 
-def onclose(sock):
-	print("CLOSE", sock)
-onclosecon = network0.onclose.connect(onclose)
+def on_close(socket):
+	print("CLOSE", socket)
+on_closecon = network0.on_close.connect(on_close)
 
-def onreceive(sock, key, *args):
+def on_receive(socket, key, *args):
 	print(key, *args)
-onreceivecon = network0.onreceive.connect(onreceive)
+on_receivecon = network0.on_receive.connect(on_receive)
 
 
 
@@ -37,4 +37,4 @@ onreceivecon = network0.onreceive.connect(onreceive)
 
 
 
-network0.connect(sock_t)
+network0.connect(socket0)
