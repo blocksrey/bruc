@@ -1,15 +1,15 @@
 class Signal:
-	def __init__(self):
-		self.callbacks = {}
+	def __init__(signal):
+		signal.callbacks = {}
 
-	def connect(self, func):
-		self.callbacks[func] = None
+	def connect(signal, func):
+		signal.callbacks[func] = None
 
 		def disconnect():
-			del self.callbacks[func]
+			del signal.callbacks[func]
 
 		return disconnect
 
-	def fire(self, *args):
-		for func in self.callbacks:
+	def fire(signal, *args):
+		for func in signal.callbacks:
 			func(*args)
