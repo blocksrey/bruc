@@ -2,34 +2,31 @@ from vec3 import Vec3
 from pyglet.graphics import draw
 from pyglet.gl import *
 
-# p0 + (tx, ty)*s : 0 <= tx < 1 && 0 <= ty < 1
-def draw_rect(p0, s, c):
-	p1 = p0 + s
-	draw(
-		6,
-		GL_TRIANGLES,
-		("v2f", (
-			p0.x, p0.y,
-			p1.x, p1.y,
-			   0, p1.y,
-			p0.x, p0.y,
-			p1.x, p1.y,
-			p1.x,    0
-		)),
-		("c3f", (
-			c.x, c.y, c.z,
-			c.x, c.y, c.z,
-			c.x, c.y, c.z,
-			c.x, c.y, c.z,
-			c.x, c.y, c.z,
-			c.x, c.y, c.z
-		))
+poss = ()
+cols = ()
+
+def append_rect(p, s, c):
+	c *= Vec3(255, 255, 255)
+	global poss; poss += (
+		p.x + 1*s.x, p.y + 1*s.y,
+		p.x + 1*s.x, p.y + 0*s.y,
+		p.x + 0*s.x, p.y + 0*s.y,
+		p.x + 0*s.x, p.y + 1*s.y
+	)
+	global cols; cols += (
+		c.x, c.y, c.z,
+		c.x, c.y, c.z,
+		c.x, c.y, c.z,
+		c.x, c.y, c.z
 	)
 
-
-
-
-
+def draw_arrays():
+	draw(
+		int(len(poss)/2),
+		GL_QUADS,
+		("v2i", poss),
+		("c3B", cols)
+	)
 
 from ctypes import *
 
@@ -82,10 +79,3 @@ class Program:
 
 	def disable(program):
 		glUseProgram(0)
-
-
-
-
-
-
-

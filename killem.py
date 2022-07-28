@@ -1,87 +1,32 @@
 print("Start Killem 2D Client")
 
 import pyglet
-from pyglet.gl import *
-
-the_win = pyglet.window.Window(800, 600, "Killem 2D")
-
 from vec2 import Vec2
 from vec3 import Vec3
-from gl import draw_rect
-
-
 import netc
-
-
 from math import cos, sin
 
-#def shaderErrorLog(shader):
-#	length
-#	glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length)
-#
-#	char *log = (char *)malloc((usize)length)
-#	glGetShaderInfoLog(shader, length, &length, log)
-#
-#	return log
-#
-#def programErrorLog(program):
-#
-#	length
-#	glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length)
-#
-#	char *log = (char *)malloc((usize)length)
-#	glGetProgramInfoLog(program, length, &length, log)
-#	return log
-#
-#def createShader(prog, type, const char *src):
-#
-#	error = 0
-#	r = glCreateShader(type)
-#
-#	glShaderSource(r, 1, &src, 0)
-#	glCompileShader(r)
-#
-#	glGetShaderiv(r, GL_COMPILE_STATUS, &error)
-#	print("Compiler error in shader\n", shaderErrorLog(r))
-#
-#	glAttachShader(prog, r)
-#	return r
-#
-#def createProgram(char *vertSrc, char *fragSrc):
-#
-#	error = 0
-#	prog = glCreateProgram()
-#	vert = createShader(prog, GL_VERTEX_SHADER, vertSrc)
-#	frag = createShader(prog, GL_FRAGMENT_SHADER, fragSrc)
-#
-#	glLinkProgram(prog)
-#	glGetProgramiv(prog, GL_LINK_STATUS, &error)
-#	print("Linker error in program\n", programErrorLog(prog))
-#
-#	glDetachShader(prog, vert)
-#	glDetachShader(prog, frag)
-#	glDeleteShader(vert)
-#	glDeleteShader(frag)
-#
-#	glValidateProgram(prog)
-#	glGetProgramiv(prog, GL_VALIDATE_STATUS, &error)
-#	print("Linker error in program\n", programErrorLog(prog))
-#
-#	return prog
+window0 = pyglet.window.Window(888, 692, "Killem 2D", 1) # easter egg much?
 
 from gl import *
+
+
+
+
+
+
 
 rect_prog = Program(
 	Shader("rectv.glsl", GL_VERTEX_SHADER),
 	Shader("rectf.glsl", GL_FRAGMENT_SHADER)
 )
 
-viewsize_u = Uniform(rect_prog, "viewsize_u")
+time_u = Uniform(rect_prog, "time")
+camp_u = Uniform(rect_prog, "camp")
+camo_u = Uniform(rect_prog, "camo")
+wins_u = Uniform(rect_prog, "wins")
 
 rect_prog.enable()
-
-
-viewsize_u.set(800, 600)
 
 
 #from mesh2 import Mesh2
@@ -98,16 +43,59 @@ viewsize_u.set(800, 600)
 
 
 
-time = 0
-while 1:
-	dt = pyglet.clock.tick()
+@window0.event
+def on_resize(sx, sy):
+	wins_u.set(sx, sy)
 
-	time -= dt
-	while time <= 0:
-		time += 10
+@window0.event
+def on_key_press(code, _):
+	pass
+
+@window0.event
+def on_key_release(code, _):
+	pass
+
+
+@window0.event
+def on_mouse_press(px, py, code, _):
+	pass
+
+@window0.event
+def on_mouse_release(px, py, code, _):
+	pass
+
+import random
+
+def build_map(path):
+	IY = 0
+	for row in open(path).readlines():
+		IX = 0
+		for bar in row:
+			if bar != ' ':
+				append_rect(Vec2(IX, IY), Vec2(1, 1), Vec3(255, 180, 240))
+			IX += 1
+		IY += 1
+
+build_map("map0.bm")
+
+time = 0
+camp = Vec3(0, 0, 0)
+camo = 0
+
+def step(dt):
+	global time; time += dt
+	global camp; camp = Vec3(0, 0, 0.05)
+	global camo; camo = 0
+
+@window0.event
+def on_draw():
+	time_u.set(time)
+	camp_u.set(camp.x, camp.y, camp.z)
+	camo_u.set(camo)
 
 	glClear(GL_COLOR_BUFFER_BIT)
 
-	draw_rect(Vec2(0, 0), Vec2(cos(time), sin(time)), Vec3(0.5, 0, 0))
+	draw_arrays()
 
-	the_win.flip()
+pyglet.clock.schedule_interval(step, 1/60) # this is bad but whatever
+pyglet.app.run()

@@ -10,7 +10,7 @@ def talk():
 Thread(target = talk).start()
 
 socket0 = socket() # AF_INET, SOCK_STREAM
-socket0.connect(("localhost", 0xDEAD))
+socket0.connect(("localhost", 57005)) # hehe
 
 
 

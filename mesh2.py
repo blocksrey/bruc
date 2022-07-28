@@ -34,7 +34,3 @@ class Mesh2:
 			lx, ly = min(lx, vy), min(ly, vy)
 
 		return Vec2(ux, uy), Vec2(lx, ly)
-
-	def build(mesh2):
-		for vertex in mesh2.vertices:
-			pass

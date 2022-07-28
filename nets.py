@@ -10,7 +10,7 @@ def talk():
 Thread(target = talk).start()
 
 socket0 = socket() # AF_INET, SOCK_STREAM
-socket0.bind(("localhost", 0xDEAD))
+socket0.bind(("localhost", 57005)) # hehe
 socket0.listen(4) # this might be enough idk
 
 from atexit import register
