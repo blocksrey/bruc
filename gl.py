@@ -2,29 +2,65 @@ from vec3 import Vec3
 from pyglet.graphics import draw
 from pyglet.gl import *
 
-poss = ()
-cols = ()
+inde = 0
+poss = []
+cols = []
 
 def append_rect(p, s, c):
-	c *= Vec3(255, 255, 255)
+	global inde;
+	of = inde
+	inde += 1
+
 	global poss; poss += (
-		p.x + 1*s.x, p.y + 1*s.y,
-		p.x + 1*s.x, p.y + 0*s.y,
-		p.x + 0*s.x, p.y + 0*s.y,
-		p.x + 0*s.x, p.y + 1*s.y
+		0, 0,
+		0, 0,
+		0, 0,
+		0, 0
 	)
+
 	global cols; cols += (
-		c.x, c.y, c.z,
-		c.x, c.y, c.z,
-		c.x, c.y, c.z,
-		c.x, c.y, c.z
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0,
+		0, 0, 0
 	)
+
+	def transform(p, s, c):
+		px, py = p.x, p.y
+		sx, sy = s.x, s.y
+		cx, cy, cz = c.x, c.y, c.z
+
+		poss[8*of + 0] = px + 1*sx
+		poss[8*of + 1] = py + 1*sy
+		poss[8*of + 2] = px + 1*sx
+		poss[8*of + 3] = py + 0*sy
+		poss[8*of + 4] = px + 0*sx
+		poss[8*of + 5] = py + 0*sy
+		poss[8*of + 6] = px + 0*sx
+		poss[8*of + 7] = py + 1*sy
+
+		cols[12*of +  0] = cx
+		cols[12*of +  1] = cy
+		cols[12*of +  2] = cz
+		cols[12*of +  3] = cx
+		cols[12*of +  4] = cy
+		cols[12*of +  5] = cz
+		cols[12*of +  6] = cx
+		cols[12*of +  7] = cy
+		cols[12*of +  8] = cz
+		cols[12*of +  9] = cx
+		cols[12*of + 10] = cy
+		cols[12*of + 11] = cz
+
+	transform(p, s, c)
+
+	return transform
 
 def draw_arrays():
 	draw(
-		int(len(poss)/2),
+		int(0.5*len(poss)),
 		GL_QUADS,
-		("v2i", poss),
+		("v2f", poss),
 		("c3B", cols)
 	)
 
