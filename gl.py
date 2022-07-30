@@ -1,117 +1,53 @@
-from vec3 import Vec3
-from pyglet.graphics import draw
-from pyglet.gl import *
-
-inde = 0
-poss = []
-cols = []
-
-def append_rect(p, s, c):
-	global inde;
-	of = inde
-	inde += 1
-
-	global poss; poss += (
-		0, 0,
-		0, 0,
-		0, 0,
-		0, 0
-	)
-
-	global cols; cols += (
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0,
-		0, 0, 0
-	)
-
-	def transform(p, s, c):
-		px, py = p.x, p.y
-		sx, sy = s.x, s.y
-		cx, cy, cz = c.x, c.y, c.z
-
-		poss[8*of + 0] = px + 1*sx
-		poss[8*of + 1] = py + 1*sy
-		poss[8*of + 2] = px + 1*sx
-		poss[8*of + 3] = py + 0*sy
-		poss[8*of + 4] = px + 0*sx
-		poss[8*of + 5] = py + 0*sy
-		poss[8*of + 6] = px + 0*sx
-		poss[8*of + 7] = py + 1*sy
-
-		cols[12*of +  0] = cx
-		cols[12*of +  1] = cy
-		cols[12*of +  2] = cz
-		cols[12*of +  3] = cx
-		cols[12*of +  4] = cy
-		cols[12*of +  5] = cz
-		cols[12*of +  6] = cx
-		cols[12*of +  7] = cy
-		cols[12*of +  8] = cz
-		cols[12*of +  9] = cx
-		cols[12*of + 10] = cy
-		cols[12*of + 11] = cz
-
-	transform(p, s, c)
-
-	return transform
-
-def draw_arrays():
-	draw(
-		int(0.5*len(poss)),
-		GL_QUADS,
-		("v2f", poss),
-		("c3B", cols)
-	)
-
 from ctypes import *
-
-uniformf = {}
-uniformf[1] = glUniform1f
-uniformf[2] = glUniform2f
-uniformf[3] = glUniform3f
-uniformf[4] = glUniform4f
-
-class Uniform:
-	def __init__(uniform, program, uniform_name):
-		uniform.id = glGetUniformLocation(program.id, uniform_name.encode())
-
-	def set(uniform, *args):
-		uniformf[len(args)](uniform.id, *args)
+from pyglet.gl import *
+from libgl import gl
 
 class Shader:
-	def __init__(shader, path, shader_type):
-		shader.id = glCreateShader(shader_type)
+	def __init__(shader, path, type):
+		shader.id = gl.glCreateShader(type)
+
+		#print("shader", shader.id)
 		source = open(path).read().encode()
-		glShaderSource(shader.id, 1, cast(source, POINTER(c_char)), c_int(len(source)))
+		source_buffer_pointer = cast(c_char_p(source), POINTER(c_char))
+		source_length = c_int(len(source))
+
+		glShaderSource(shader.id, 1, byref(source_buffer_pointer), source_length)
 
 class Program:
 	def __init__(program, *shaders):
-		program.id = glCreateProgram()
-
+		program.id = gl.glCreateProgram()
 		for shader in shaders:
-			glAttachShader(program.id, shader.id)
+			gl.glAttachShader(program.id, shader.id)
+		gl.glLinkProgram(program.id)
 
-		glLinkProgram(program.id)
+		def debug():
+			info_log_result = c_int(0)
+			gl.glGetProgramiv(program.id, GL_INFO_LOG_LENGTH, byref(info_log_result))
+			info_log_str = create_string_buffer(info_log_result.value)
+			gl.glGetProgramInfoLog(program.id, info_log_result, None, info_log_str)
+			if info_log_str.value:
+				print(info_log_str.value)
 
-		info_log_result = c_int(0)
-		glGetProgramiv(program.id, GL_INFO_LOG_LENGTH, byref(info_log_result))
-		info_log_str = create_string_buffer(info_log_result.value)
-		glGetProgramInfoLog(program.id, info_log_result, None, info_log_str)
-		if info_log_str.value:
-			print(info_log_str.value)
+		debug()
 
-		status = c_int(0)
-		glGetProgramiv(program.id, GL_LINK_STATUS, status)
-		if not status.value:
-			length = c_int(0)
-			glGetProgramiv(program.id, GL_INFO_LOG_LENGTH, length)
-			log = c_buffer(length.value)
-			glGetProgramInfoLog(program.id, len(log), None, log)
-			print(log.value.decode())
+	def use(program):
+		gl.glUseProgram(program.id)
 
-	def enable(program):
-		glUseProgram(program.id)
+uniform_callbacks = {}
+uniform_callbacks[1] = glUniform1f
+uniform_callbacks[2] = glUniform2f
+uniform_callbacks[3] = glUniform3f
+uniform_callbacks[4] = glUniform4f
 
-	def disable(program):
-		glUseProgram(0)
+class Uniform:
+	def __init__(uniform, name):
+		uniform.name = name.encode()
+		uniform.ids = ()
+
+	def attach(uniform, program):
+		uniform.ids += (gl.glGetUniformLocation(program.id, uniform.name), )
+
+	def set(uniform, *args):
+		uniform_callback = uniform_callbacks[len(args)]
+		for uniform_id in uniform.ids:
+			uniform_callback(uniform_id, *args)

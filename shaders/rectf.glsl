@@ -5,8 +5,8 @@
 
 layout (location = 1) in vec3 col0;
 
-layout (location = 0) out vec3 col1;
+layout (location = 0) out vec4 col1;
 
 void main() {
-	col1 = col0;
+	col1 = vec4(col0, 1);
 }

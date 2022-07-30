@@ -19,8 +19,8 @@ class Vec2:
 	def __div__(a, b):
 		return Vec2(a.x/b.x, a.y/b.y)
 
-	def __repr__(a):
-		return repr((a.x, a.y))
+	def unpack(a):
+		return a.x, a.y
 
 	def __neg__(a):
 		return Vec2(-a.x, -a.y)
@@ -28,11 +28,15 @@ class Vec2:
 	def __mod__(a, b):
 		return Vec2(a.x%b, a.y%b)
 
-	def __abs__(a):
+	def norm(a):
 		return sqrt(a.x*a.x + a.y*a.y)
 
 	def dot(a, b):
 		return a.x*b.x + a.y*b.y
 
+	def unit(a):
+		l = sqrt(a.x*a.x + a.y*a.y)
+		return Vec2(a.x/l, a.y/l)
+
 	def to_polar(a):
-		return a.__abs__(), atan2(a.y, a.x)
+		return a.norm(), atan2(a.y, a.x)

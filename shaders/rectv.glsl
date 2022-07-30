@@ -18,6 +18,7 @@ mat2 rotm = mat2(
 );
 
 void main() {
-	gl_Position = vec4(rotm*(vec2(-wins.y/wins.x, 1)*(camp.xy - pos0.xy))/camp.z, 0, 1);
+	gl_Position = vec4(rotm*(camp.xy - pos0.xy)*vec2(-wins.y/wins.x, 1)/camp.z, 0, 1);
+
 	col1 = col0;
 }

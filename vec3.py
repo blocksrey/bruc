@@ -19,8 +19,8 @@ class Vec3:
 	def __div__(a, b):
 		return Vec3(a.x/b.x, a.y/b.y, a.z/b.z)
 
-	def __repr__(a):
-		return repr((a.x, a.y, a.z))
+	def unpack(a):
+		return a.x, a.y, a.z
 
 	def __neg__(a):
 		return Vec3(-a.x, -a.y, -a.z)
@@ -28,8 +28,12 @@ class Vec3:
 	def __mod__(a, b):
 		return Vec3(a.x%b, a.y%b, a.z%b)
 
-	def __abs__(a):
+	def norm(a):
 		return sqrt(a.x*a.x + a.y*a.y + a.z*a.z)
 
 	def dot(a, b):
 		return a.x*b.x + a.y*b.y + a.z*b.z
+
+	def unit(a):
+		l = sqrt(a.x*a.x + a.y*a.y + a.z*a.z)
+		return Vec2(a.x/l, a.y/l, a.z/l)

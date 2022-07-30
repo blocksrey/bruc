@@ -19,15 +19,15 @@ register(socket0.close)
 
 
 def on_connect(socket):
-	print("CONNECT", socket)
+	pass#print("CONNECT", socket)
 on_connectcon = network0.on_connect.connect(on_connect)
 
 def on_close(socket):
-	print("CLOSE", socket)
+	pass#print("CLOSE", socket)
 on_closecon = network0.on_close.connect(on_close)
 
 def on_receive(socket, key, *args):
-	print(key, *args)
+	pass#print(key, *args)
 on_receivecon = network0.on_receive.connect(on_receive)
 
 

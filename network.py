@@ -1,6 +1,6 @@
 from serial import serialize, deserialize
 from threading import Thread
-from signal import Signal
+from sig import Signal
 
 BUFFER_SIZE = 512
 
@@ -17,8 +17,14 @@ class Network:
 			network.sockets[socket] = None
 
 			network.on_connect.fire(socket)
-			while stream := socket.recv(BUFFER_SIZE):
+
+			while 1:
+				stream = socket.recv(BUFFER_SIZE)
+				if not stream:
+					break
+
 				network.on_receive.fire(socket, deserialize(stream))
+
 			network.on_close.fire(socket)
 
 			del network.sockets[socket]
