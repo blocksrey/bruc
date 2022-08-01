@@ -1,4 +1,4 @@
-from socket import socket
+import socket
 from network import Network
 from threading import Thread
 
@@ -9,8 +9,8 @@ def talk():
 		network0.send(input())
 Thread(target = talk).start()
 
-socket0 = socket() # AF_INET, SOCK_STREAM
-socket0.connect(("localhost", 57005)) # hehe
+socket0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # IPv4, TCP
+socket0.connect(("localhost", 57005)) # Hehe
 
 
 

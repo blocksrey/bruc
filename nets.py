@@ -1,4 +1,4 @@
-from socket import socket
+import socket
 from network import Network
 from threading import Thread
 
@@ -9,9 +9,9 @@ def talk():
 		network0.send(input())
 Thread(target = talk).start()
 
-socket0 = socket() # AF_INET, SOCK_STREAM
-socket0.bind(("localhost", 57005)) # hehe
-socket0.listen(4) # this might be enough idk
+socket0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # IPv4, TCP
+socket0.bind(("localhost", 57005)) # Hehe
+socket0.listen(4) # This might be enough?
 
 from atexit import register
 register(socket0.close)
@@ -38,6 +38,7 @@ on_receivecon = network0.on_receive.connect(on_receive)
 
 
 
-
-while 1:
-	network0.connect(socket0.accept()[0])
+def accept_connections():
+	while 1:
+		network0.connect(socket0.accept()[0])
+Thread(target = accept_connections).start()

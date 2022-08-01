@@ -1,34 +1,31 @@
 from serial import serialize, deserialize
 from threading import Thread
-from sig import Signal
+from caller import Caller
 
-BUFFER_SIZE = 512
+BUFFER_SIZE = 512 # This is probably enough
 
 class Network:
 	# should these be created with __init__? idk
 	sockets = {}
 
-	on_connect = Signal()
-	on_close = Signal()
-	on_receive = Signal()
+	on_connect = Caller()
+	on_close = Caller()
+	on_receive = Caller()
 
 	def connect(network, socket):
 		def doodoo():
 			network.sockets[socket] = None
-
 			network.on_connect.fire(socket)
 
 			while 1:
 				stream = socket.recv(BUFFER_SIZE)
-				if not stream:
+				if not stream: # Doing it this way for Python backwards compatibility
 					break
 
 				network.on_receive.fire(socket, deserialize(stream))
 
 			network.on_close.fire(socket)
-
 			del network.sockets[socket]
-
 			socket.close()
 
 		Thread(target = doodoo).start()

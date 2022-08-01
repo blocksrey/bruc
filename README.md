@@ -1,23 +1,22 @@
 # Killem 2D (TechWise Summer Project)
-An elegant 2D multiplayer shooty thing written in Python (Far from pythonic)
+A multiplayer 2D shooty thing written in Python 3
 
 ## Dependencies
-- Python
-- Pyglet
+- Python 3.x (That's it)
 
 ## Installation
-Example with pacman:
+Example with Pacman:
 ```sh
-pacman -S python-pyglet
-```
-
-Windows:
-```bimbows
-idk bro, you're on your own
+pacman -S python38
 ```
 
 ## Execution
-Run with the following:
+Running the game client:
 ```sh
 python killem.py
+```
+
+And for the server:
+```sh
+python killems.py
 ```
