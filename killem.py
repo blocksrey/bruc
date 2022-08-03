@@ -203,12 +203,22 @@ tick0 = time()
 from spring import Spring
 camo_spring = Spring(0, 0)
 
+
+m0x, m0y = 0, 0
+m1x, m1y = 0, 0
+
 def step(dt):
 	global tick; tick = time() - tick0
-	global camd; camd = 15 + 5*sin(0.2*tick)
+	global camd; camd = 40 + 20*sin(tick)
 
 	camo_spring.step(0, 12, 0.4, dt)
 	global camo; camo = cang(camo_spring.p)
+
+	global bullets; bullet = {}
+	bullet['i'] = add_bullet()
+	bullet['p'] = Vec2(m0x, m0y)
+	bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
+	bullets += (bullet, )
 
 	for bullet in bullets:
 		bullet['p'] += Vec2(dt, dt)*bullet['v'] + Vec2(0.5*dt*dt, 0.5*dt*dt)*accel

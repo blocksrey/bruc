@@ -3,17 +3,13 @@
 #extension GL_ARB_separate_shader_objects : enable
 
 uniform float camd;
-//uniform vec2 camp, camo, wins;
-uniform vec2 camp;
-uniform vec2 camo;
-uniform vec2 wins;
+uniform vec2 camp, camo, wins;
 
 layout (location = 0) in vec2 pos0;
 layout (location = 3) in vec4 col0;
 
 layout (location = 1) out vec4 col1;
 
-// complex multiplication
 vec2 cmul(vec2 a, vec2 b) {
 	return vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x);
 }
