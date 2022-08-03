@@ -5,7 +5,7 @@ class Vec3:
 		a.x, a.y, a.z = x, y, z
 
 	def __str__(a):
-		return "Vec3({}, {}, {})".format(a.x, a.y, a.z)
+		return 'Vec3({}, {}, {})'.format(a.x, a.y, a.z)
 
 	def __add__(a, b):
 		return Vec3(a.x + b.x, a.y + b.y, a.z + b.z)
@@ -18,9 +18,6 @@ class Vec3:
 
 	def __div__(a, b):
 		return Vec3(a.x/b.x, a.y/b.y, a.z/b.z)
-
-	def unpack(a):
-		return a.x, a.y, a.z
 
 	def __neg__(a):
 		return Vec3(-a.x, -a.y, -a.z)

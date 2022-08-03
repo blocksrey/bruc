@@ -5,7 +5,7 @@ class Vec2:
 		a.x, a.y = x, y
 
 	def __str__(a):
-		return "Vec2({}, {})".format(a.x, a.y)
+		return 'Vec2({}, {})'.format(a.x, a.y)
 
 	def __add__(a, b):
 		return Vec2(a.x + b.x, a.y + b.y)
@@ -18,9 +18,6 @@ class Vec2:
 
 	def __div__(a, b):
 		return Vec2(a.x/b.x, a.y/b.y)
-
-	def unpack(a):
-		return a.x, a.y
 
 	def __neg__(a):
 		return Vec2(-a.x, -a.y)

@@ -1,28 +1,9 @@
-- Graphics class:
-    Draw textures
-    Draw primitives (rectangles, circles, etc.)
-
-- Input handling
-    Key presses
-    Mouse inputs
-
-- Vector class (vec2)
-    vec2(x, y)
-
-    Matrix by vector (should return a vector)
-
-    dot product (ax*ay + bx*by)
-
-    # number by vector
-    (vector + number)
-    (vector - number)
-    (number*vector)
-    (vector/number)
-
 - Character controller class
     Jump
     Walk
     Move around
+
+- Character collisions
 
 - Representation of geometry (How will maps be stored?):
     Be able to collide with maps with little computation (geometry traversal)
@@ -30,3 +11,9 @@
 
 - Camera class (for viewing the world):
     Follow the player with camera
+
+- Proper multiplayer so you can shoot people
+
+- Cool shaky effects
+
+- Bullet collisions

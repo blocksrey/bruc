@@ -17,11 +17,7 @@ class Network:
 			network.sockets[socket] = None
 			network.on_connect.fire(socket)
 
-			while 1:
-				stream = socket.recv(BUFFER_SIZE)
-				if not stream: # Doing it this way for Python backwards compatibility
-					break
-
+			while stream := socket.recv(BUFFER_SIZE):
 				network.on_receive.fire(socket, deserialize(stream))
 
 			network.on_close.fire(socket)
