@@ -214,11 +214,13 @@ def step(dt):
 	camo_spring.step(0, 12, 0.4, dt)
 	global camo; camo = cang(camo_spring.p)
 
-	global bullets; bullet = {}
-	bullet['i'] = add_bullet()
-	bullet['p'] = Vec2(m0x, m0y)
-	bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
-	bullets += (bullet, )
+	global camp; camp = Vec2(40 + 20*sin(0.5*tick), -6 + 10*cos(0.4*tick))
+
+	#global bullets; bullet = {}
+	#bullet['i'] = add_bullet()
+	#bullet['p'] = Vec2(m0x, m0y)
+	#bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
+	#bullets += (bullet, )
 
 	for bullet in bullets:
 		bullet['p'] += Vec2(dt, dt)*bullet['v'] + Vec2(0.5*dt*dt, 0.5*dt*dt)*accel
@@ -302,7 +304,7 @@ def on_mouse_release(px, py, code, mod):
 	bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
 	bullets += (bullet, )
 
-	camo_spring.v += 40
+	camo_spring.v += 5
 
 @window0.event
 def on_mouse_motion(px, py, dx, dy):
