@@ -1,6 +1,8 @@
 # Killem 2D (TechWise Summer Project)
 A multiplayer 2D shooty thing written in Python 3
 
+![](assets/bullets.gif)
+
 ## Dependencies
 - Python 3.x (That's it)
 
@@ -20,5 +22,3 @@ And for the server:
 ```sh
 python killems.py
 ```
-
-![](bullets.gif)
