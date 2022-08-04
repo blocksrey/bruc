@@ -20,3 +20,5 @@ And for the server:
 ```sh
 python killems.py
 ```
+
+![](bullets.gif)
