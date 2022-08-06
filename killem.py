@@ -1,16 +1,64 @@
-#import gc; gc.disable() # wut this?
-
 print('Start Killem 2D Client')
 
 from vec2 import Vec2
 from vec3 import Vec3
-#import netc
-from math import cos, sin, atan2
+from math import cos, sin, atan2, sqrt
 import pyglet
 from pyglet.gl import *
 from glutil import *
 
 window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
+
+VAO_MODE = gl_info.have_version(2) and 0
+
+RELEASE = 0
+if RELEASE:
+	import gc; gc.disable() # no garbage collection
+	pyglet.options['debug_gl'] = 0 # no debug
+
+glEnable(GL_BLEND)
+glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+glClearColor(0, 0, 0.2, 0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -32,15 +80,16 @@ class State:
 	def depend(*_):
 		pass
 
-
-
 state0 = State()
 
 
 
-glEnable(GL_BLEND);
-glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-glClearColor(0, 0, 0.2, 0)
+
+
+
+
+
+
 
 
 
@@ -59,9 +108,9 @@ rect_poss = []
 rect_cols = []
 
 def add_rect():
-	global rect_inde; rect_inde +=  1
-	global rect_poss; rect_poss +=  8*(0, ) # this is probably slow
-	global rect_cols; rect_cols += 12*(0, )
+	global rect_inde; rect_inde += 1
+	global rect_poss; rect_poss += (0, )*8 # this is probably slow
+	global rect_cols; rect_cols += (0, )*12
 
 	return rect_inde
 
@@ -92,13 +141,35 @@ def edit_rect(i, p, s, c):
 	rect_cols[12*i + 10] = cy
 	rect_cols[12*i + 11] = cz
 
-def draw_rects():
-	pyglet.graphics.draw(
-		int(0.5*len(rect_poss)),
-		GL_QUADS,
-		('v2f', rect_poss),
-		('c3B', rect_cols)
-	)
+
+from math import tan, pi
+
+def glPerspective(vt, ar, z0, z1):
+		hh = tan(vt/180*pi)*z0
+		hw = ar*hh
+		glFrustum(-hw, hw, -hh, hh, z0, z1)
+
+if VAO_MODE:
+	def draw_rects():
+		pyglet.graphics.draw(
+			4*(rect_inde + 1),
+			GL_QUADS,
+			('v2f', rect_poss),
+			('c3f', rect_cols)
+		)
+else:
+	def draw_rects():
+		for i in range(rect_inde + 1):
+			glColor3f(rect_cols[12*i + 0], rect_cols[12*i + 1], rect_cols[12*i + 2])
+
+			glVertex3f(rect_poss[8*i + 0], rect_poss[8*i + 1], 2)
+			glVertex3f(rect_poss[8*i + 2], rect_poss[8*i + 3], 2)
+			glVertex3f(rect_poss[8*i + 4], rect_poss[8*i + 5], 2)
+			glVertex3f(rect_poss[8*i + 6], rect_poss[8*i + 7], 2)
+
+
+
+
 
 
 
@@ -114,23 +185,23 @@ bullet_wins_uniform = glGetUniformLocation(bullet_program.id, b'wins')
 
 bullet_inde = -1
 bullet_poss = []
-bullet_tran = []
+bullet_opac = []
 
 def add_bullet():
 	global bullet_inde; bullet_inde += 1
-	global bullet_poss; bullet_poss += 8*(0, )
-	global bullet_tran; bullet_tran += 1*(0, )
+	global bullet_poss; bullet_poss += (0, )*8
+	global bullet_opac; bullet_opac += (0, )*1
 
 	return bullet_inde
 
 def edit_bullet(i, p, d):
 	px, py = p.x, p.y
+	dx, dy = d.x, d.y
 
-	t = atan2(d.y, d.x)
-	c, s = cos(t), sin(t)
-
-	h = d.norm()
+	h = sqrt(dx*dx + dy*dy)
 	r = 0.2
+
+	c, s = dx/h, dy/h # cos, sin
 
 	hc, hs = h*c, h*s
 	rc, rs = r*c, r*s
@@ -147,27 +218,139 @@ def edit_bullet(i, p, d):
 	bullet_poss[8*i + 6] = px + rs + hc
 	bullet_poss[8*i + 7] = py - rc + hs
 
-def draw_bullets():
-	pyglet.graphics.draw(
-		int(0.5*len(bullet_poss)),
-		GL_QUADS,
-		('v2f', bullet_poss)
-	)
+	bullet_opac[i] = (2)*pi*r/(pi*r + 2*h) # (circular_area ./ h->0)/circular_area
+
+if VAO_MODE:
+	def draw_bullets():
+		pyglet.graphics.draw(
+			4*(bullet_inde + 1),
+			GL_QUADS,
+			('v2f', bullet_poss)
+		)
+else:
+	def draw_bullets():
+		for i in range(bullet_inde + 1):
+			glColor4f(1, 0.9, 0, bullet_opac[i])
+
+			glVertex2f(bullet_poss[8*i + 0], bullet_poss[8*i + 1])
+			glVertex2f(bullet_poss[8*i + 2], bullet_poss[8*i + 3])
+			glVertex2f(bullet_poss[8*i + 4], bullet_poss[8*i + 5])
+			glVertex2f(bullet_poss[8*i + 6], bullet_poss[8*i + 7])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+character_inde = -1
+character_poss = []
+
+def add_character():
+	global character_inde; character_inde += 1
+	global character_poss; character_poss += (0, )*8
+
+	return character_inde
+
+def edit_character(i, p, o):
+	px, py = p.x, p.y
+
+	h = 2
+	r = 0.5
+
+	c, s = -o.y, o.x
+
+	hc, hs = h*c, h*s
+	rc, rs = r*c, r*s
+
+	character_poss[8*i + 0] = px - rs + hc
+	character_poss[8*i + 1] = py + rc + hs
+
+	character_poss[8*i + 2] = px - rs
+	character_poss[8*i + 3] = py + rc
+
+	character_poss[8*i + 4] = px + rs
+	character_poss[8*i + 5] = py - rc
+
+	character_poss[8*i + 6] = px + rs + hc
+	character_poss[8*i + 7] = py - rc + hs
+
+if VAO_MODE:
+	def draw_characters():
+		pyglet.graphics.draw(
+			4*(bullet_inde + 1),
+			GL_QUADS,
+			('v2f', bullet_poss)
+		)
+else:
+	def draw_characters():
+		glColor4f(0, 1, 1, 1)
+
+		for i in range(character_inde + 1):
+			glVertex2f(character_poss[8*i + 0], character_poss[8*i + 1])
+			glVertex2f(character_poss[8*i + 2], character_poss[8*i + 3])
+			glVertex2f(character_poss[8*i + 4], character_poss[8*i + 5])
+			glVertex2f(character_poss[8*i + 6], character_poss[8*i + 7])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
 char_cols = {}
-char_cols['G'] = Vec3(0, 192, 0)
-char_cols['C'] = Vec3(128, 128, 128)
-char_cols['_'] = Vec3(200, 200, 200)
+char_cols['G'] = Vec3(0, 0.75, 0)
+char_cols['C'] = Vec3(0.5, 0.5, 0.5)
+char_cols['_'] = Vec3(0.8, 0.8, 0.8)
 
-char_cols['^'] = Vec3(255, 0, 0)
-char_cols['>'] = Vec3(255, 0, 0)
-char_cols['<'] = Vec3(255, 0, 0)
+char_cols['^'] = Vec3(1, 0, 0)
+char_cols['>'] = Vec3(1, 0, 0)
+char_cols['<'] = Vec3(1, 0, 0)
 
-char_cols['J'] = Vec3(255, 0, 255)
+char_cols['J'] = Vec3(1, 0, 1)
 
-char_cols['|'] = Vec3(128, 192, 255)
+char_cols['|'] = Vec3(0.5, 0.75, 1)
 
 def build_map(path):
 	iy = 0
@@ -187,6 +370,9 @@ def build_map(path):
 def cang(t):
 	return Vec2(cos(t), sin(t))
 
+def cmul(a, b):
+	return Vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x)
+
 
 
 from time import time
@@ -195,6 +381,7 @@ from random import random
 build_map('maps/map0.bm')
 
 bullets = []
+characters = []
 
 accel = Vec2(0, -128)
 
@@ -226,6 +413,19 @@ def step(dt):
 		bullet['p'] += Vec2(dt, dt)*bullet['v'] + Vec2(0.5*dt*dt, 0.5*dt*dt)*accel
 		bullet['v'] += Vec2(dt, dt)*accel
 		edit_bullet(bullet['i'], bullet['p'], Vec2(dt, dt)*bullet['v'])
+		#edit_bullet(bullet['i'], Vec2(camp.x, camp.y), Vec2(m1x - m0x, m1y - m0y))
+
+	for character_index in characters:
+		this_tick = tick*12
+
+		s = sin(this_tick)
+
+		ox = 0
+		oy = s*s
+
+		ori = 0.2*sin(this_tick)
+
+		edit_character(character_index, Vec2(20 + 20*cos(tick + character_index) + ox, -10*sin(tick*0.9 + character_index) + oy), Vec2(cos(ori), sin(ori)))
 
 pyglet.clock.schedule_interval(step, 1/60) # this is bad but whatever
 
@@ -249,32 +449,56 @@ def update_wins_uniforms(wins):
 #rect_uniform_change.before.connect(use_rect_program)
 
 
+if VAO_MODE:
+	@window0.event
+	def on_resize(sx, sy):
+		#state0.set('wins', Vec2(sx, sy))
+		update_wins_uniforms(Vec2(sx, sy))
 
-def draw_scene():
-	glClear(GL_COLOR_BUFFER_BIT) # can't make this assumption (i want better state management)
+	def draw_scene():
+		glClear(GL_COLOR_BUFFER_BIT) # can't make this assumption (i want better state management)
 
-	# render rects
-	glUseProgram(rect_program.id)
-	glUniform1f(rect_camd_uniform, camd)
-	glUniform2f(rect_camp_uniform, camp.x, camp.y)
-	glUniform2f(rect_camo_uniform, camo.x, camo.y)
-	draw_rects()
+		# render rects
+		glUseProgram(rect_program.id)
+		glUniform1f(rect_camd_uniform, camd)
+		glUniform2f(rect_camp_uniform, camp.x, camp.y)
+		glUniform2f(rect_camo_uniform, camo.x, camo.y)
+		draw_rects()
 
-	# render bullets
-	glUseProgram(bullet_program.id)
-	glUniform1f(bullet_camd_uniform, camd)
-	glUniform2f(bullet_camp_uniform, camp.x, camp.y)
-	glUniform2f(bullet_camo_uniform, camo.x, camo.y)
-	draw_bullets()
+		# render bullets
+		glUseProgram(bullet_program.id)
+		glUniform1f(bullet_camd_uniform, camd)
+		glUniform2f(bullet_camp_uniform, camp.x, camp.y)
+		glUniform2f(bullet_camo_uniform, camo.x, camo.y)
+		draw_bullets()
+else:
+	def draw_scene():
+		glClear(GL_COLOR_BUFFER_BIT)
+		glViewport(0, 0, window0.width, window0.height)
+
+		glMatrixMode(GL_PROJECTION)
+		glLoadIdentity()
+		glPerspective(45, window0.width/window0.height, 0.1, 1000)
+
+		glRotatef(180/pi*atan2(-camo.y, camo.x), 0, 0, 1)
+		glTranslatef(-camp.x, -camp.y, -camd)
+
+		glBegin(GL_QUADS)
+
+		draw_rects()
+		draw_bullets()
+		draw_characters()
+
+		glEnd()
 
 #state0.on('draw').connect(draw_scene)
 
 
 
-@window0.event
-def on_resize(sx, sy):
-	#state0.set('wins', Vec2(sx, sy))
-	update_wins_uniforms(Vec2(sx, sy))
+
+
+
+
 
 @window0.event
 def on_key_press(code, mod):
@@ -303,6 +527,8 @@ def on_mouse_release(px, py, code, mod):
 	bullet['p'] = Vec2(m0x, m0y)
 	bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
 	bullets += (bullet, )
+
+	global characters; characters += (add_character(), )
 
 	camo_spring.v += 5
 

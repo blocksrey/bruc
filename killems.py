@@ -1,3 +1,3 @@
 print('Start Killem 2D Server')
 
-import nets
+from nets import network0

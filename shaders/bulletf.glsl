@@ -5,5 +5,5 @@
 layout (location = 0) out vec4 col1;
 
 void main() {
-	col1 = vec4(1, 0.9, 0.8, 1);
+	col1 = vec4(1, 0.9, 0, 1);
 }

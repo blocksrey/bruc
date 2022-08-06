@@ -1,8 +1,7 @@
 import socket
-from network import Network
-from threading import Thread
+import network
 
-network0 = Network()
+network0 = network.Network()
 
 socket0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # IPv4, TCP
 socket0.bind(('localhost', 57005)) # Hehe
@@ -10,6 +9,7 @@ socket0.listen(4) # This might be enough?
 
 from atexit import register
 register(socket0.close)
+
 
 
 
@@ -27,5 +27,9 @@ on_receivecon = network0.on_receive.connect(on_receive)
 
 
 
+
+
+
+
 while 1:
-		network0.connect(socket0.accept()[0])
+	network0.connect(socket0.accept()[0])

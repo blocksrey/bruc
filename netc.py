@@ -1,15 +1,10 @@
 import socket
-from network import Network
-from threading import Thread
+import network
 
-network0 = Network()
+network0 = network.Network()
 
 socket0 = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # IPv4, TCP
 socket0.connect(('localhost', 57005)) # Hehe
-
-
-
-
 
 
 
@@ -24,6 +19,8 @@ on_closecon = network0.on_close.connect(on_close)
 def on_receive(socket, key, *args):
 	print(key, *args)
 on_receivecon = network0.on_receive.connect(on_receive)
+
+
 
 
 
