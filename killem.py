@@ -9,7 +9,7 @@ from glutil import *
 
 window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
 
-VAO_MODE = gl_info.have_version(2)
+VAO_MODE = gl_info.have_version(2) and 0
 
 RELEASE = 0
 if RELEASE:
@@ -92,16 +92,16 @@ state0 = State()
 
 
 
-
-rect_program = Program(
-	Shader('shaders/rectv.glsl', GL_VERTEX_SHADER),
-	Shader('shaders/rectf.glsl', GL_FRAGMENT_SHADER)
-)
-
-rect_camd_uniform = glGetUniformLocation(rect_program.id, b'camd')
-rect_camp_uniform = glGetUniformLocation(rect_program.id, b'camp')
-rect_camo_uniform = glGetUniformLocation(rect_program.id, b'camo')
-rect_wins_uniform = glGetUniformLocation(rect_program.id, b'wins')
+# this needs to not be here (opengl < 2.x)
+#rect_program = Program(
+#	Shader('shaders/rectv.glsl', GL_VERTEX_SHADER),
+#	Shader('shaders/rectf.glsl', GL_FRAGMENT_SHADER)
+#)
+#
+#rect_camd_uniform = glGetUniformLocation(rect_program.id, b'camd')
+#rect_camp_uniform = glGetUniformLocation(rect_program.id, b'camp')
+#rect_camo_uniform = glGetUniformLocation(rect_program.id, b'camo')
+#rect_wins_uniform = glGetUniformLocation(rect_program.id, b'wins')
 
 rect_inde = -1
 rect_poss = []
@@ -173,15 +173,15 @@ else:
 
 
 
-bullet_program = Program(
-	Shader('shaders/bulletv.glsl', GL_VERTEX_SHADER),
-	Shader('shaders/bulletf.glsl', GL_FRAGMENT_SHADER)
-)
-
-bullet_camd_uniform = glGetUniformLocation(bullet_program.id, b'camd')
-bullet_camp_uniform = glGetUniformLocation(bullet_program.id, b'camp')
-bullet_camo_uniform = glGetUniformLocation(bullet_program.id, b'camo')
-bullet_wins_uniform = glGetUniformLocation(bullet_program.id, b'wins')
+#bullet_program = Program(
+#	Shader('shaders/bulletv.glsl', GL_VERTEX_SHADER),
+#	Shader('shaders/bulletf.glsl', GL_FRAGMENT_SHADER)
+#)
+#
+#bullet_camd_uniform = glGetUniformLocation(bullet_program.id, b'camd')
+#bullet_camp_uniform = glGetUniformLocation(bullet_program.id, b'camp')
+#bullet_camo_uniform = glGetUniformLocation(bullet_program.id, b'camo')
+#bullet_wins_uniform = glGetUniformLocation(bullet_program.id, b'wins')
 
 bullet_inde = -1
 bullet_poss = []
@@ -627,6 +627,6 @@ def on_draw():
 
 	glClearColor(0, 0, 1, 0)
 
-	label.draw()
+	#label.draw()
 
 pyglet.app.run()
