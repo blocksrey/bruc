@@ -9,7 +9,7 @@ from glutil import *
 
 window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
 
-VAO_MODE = gl_info.have_version(2) and 0
+VAO_MODE = gl_info.have_version(2)
 
 RELEASE = 0
 if RELEASE:
@@ -162,10 +162,10 @@ else:
 		for i in range(rect_inde + 1):
 			glColor3f(rect_cols[12*i + 0], rect_cols[12*i + 1], rect_cols[12*i + 2])
 
-			glVertex3f(rect_poss[8*i + 0], rect_poss[8*i + 1], 2)
-			glVertex3f(rect_poss[8*i + 2], rect_poss[8*i + 3], 2)
-			glVertex3f(rect_poss[8*i + 4], rect_poss[8*i + 5], 2)
-			glVertex3f(rect_poss[8*i + 6], rect_poss[8*i + 7], 2)
+			glVertex2f(rect_poss[8*i + 0], rect_poss[8*i + 1])
+			glVertex2f(rect_poss[8*i + 2], rect_poss[8*i + 3])
+			glVertex2f(rect_poss[8*i + 4], rect_poss[8*i + 5])
+			glVertex2f(rect_poss[8*i + 6], rect_poss[8*i + 7])
 
 
 
@@ -359,9 +359,9 @@ def build_map(path):
 		for char in row:
 			if char == 'P':
 				global camd; camd = 20
-				global camp; camp = Vec2(ix, -2*iy)
+				global camp; camp = Vec2(ix, -4*iy)
 			elif char != ' ' and char != '\n':
-				edit_rect(add_rect(), Vec2(ix, -2*iy), Vec2(1, 2), char_cols[char])
+				edit_rect(add_rect(), Vec2(2*ix, -4*iy), Vec2(2, 4), char_cols[char])
 			ix += 1
 		iy += 1
 
@@ -416,7 +416,7 @@ def step(dt):
 		#edit_bullet(bullet['i'], Vec2(camp.x, camp.y), Vec2(m1x - m0x, m1y - m0y))
 
 	for character_index in characters:
-		this_tick = tick*12
+		this_tick = tick*14
 
 		s = sin(this_tick)
 
@@ -447,6 +447,15 @@ def update_wins_uniforms(wins):
 
 #rect_uniform_change = state0.depend('rect_camp_uniform', 'rect_camo_uniform')
 #rect_uniform_change.before.connect(use_rect_program)
+
+
+
+
+label = pyglet.text.Label('hello', x = 10, y = 10)
+
+
+
+
 
 
 if VAO_MODE:
@@ -500,13 +509,78 @@ else:
 
 
 
-@window0.event
-def on_key_press(code, mod):
-	pass
+from sorter import Sorter
 
-@window0.event
-def on_key_release(code, mod):
-	pass
+sorter0 = Sorter()
+sorter0.set(1, "PENIS")
+sorter0.set(2, "PENIS")
+sorter0.set(3, "PENIS")
+sorter0.set(-0.4, "PasdENIS")
+sorter0.set(-0.2, "PENIS1")
+
+print(sorter0.sorted)
+print(sorter0.sorted)
+
+cool_spring = Spring(0, 0)
+
+
+
+
+
+
+
+
+class Sequencer:
+	def __init__(sequencer):
+		sequencer.queue = []
+
+	def call(sequencer, time):
+		sequencer.queue.append(time)
+
+	def dump(sequencer, time):
+		#print(sequencer.queue)
+		pass
+
+
+
+ammo = 3
+
+lastshot = 0
+def get_cooldown(et):
+	lastshot = et
+	print("shoot @", t)
+	return 0.1
+
+sequencer0 = Sequencer()
+
+sequencer0.dump(3)
+sequencer0.call(get_cooldown)
+sequencer0.dump(3.1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 @window0.event
 def on_mouse_press(px, py, code, mod):
@@ -539,7 +613,20 @@ def on_mouse_motion(px, py, dx, dy):
 
 @window0.event
 def on_draw():
+	glClearColor(0, 0, 0, 1)
+
 	#state0.call('draw')
 	draw_scene()
+
+	glMatrixMode(GL_PROJECTION)
+	glLoadIdentity()
+	glOrtho(0, window0.width, 0, window0.height, -1, 1)
+
+	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
+
+	glClearColor(0, 0, 1, 0)
+
+	label.draw()
 
 pyglet.app.run()

@@ -17,3 +17,5 @@
 - Cool shaky effects
 
 - Bullet collisions
+
+- Player nameplates and nametags
