@@ -1,36 +1,61 @@
 from vec2 import Vec2
-from math import inf
+from ray2 import Ray2
+from math import inf, atan2
+from sorter import Sorter
 
 class Mesh2:
-	def __init__(mesh2, *vertices):
-		mesh2.vertices = vertices
-		mesh2._sort()
+	def __init__(mesh2, vertices):
+		mesh2.sorter = Sorter()
+		mesh2.update_vertices(vertices)
 
-	def _sort(mesh2):
-		pass
+	def get_centroid(mesh2):
+		s = Vec2(0, 0)
 
-	# this is kinda trash but whatever
+		for v in mesh2.vertices:
+			s += v
+
+		return s/len(mesh2.vertices)
+
 	def build_rays(mesh2):
-		rays = []
+		mesh2.rays = ()
 
-		vert_count = len(mesh2.vertices)
+		n = len(mesh2.vertices)
 
-		for index in range(vert_count - 1):
-			va = mesh2.vertices[index + 0]
-			vb = mesh2.vertices[index + 1]
+		for i in range(n):
+			va = mesh2.vertices[i]
+			vb = mesh2.vertices[(i + 1)%n]
 
-			rays.append((va, vb - va, abs(vb - va)))
+			mesh2.rays += (Ray2(va, vb - va), )
 
-		return rays
+	def update_vertices(mesh2, vertices):
+		mesh2.vertices = vertices
+
+		c = mesh2.get_centroid() # pivot
+
+		for v in mesh2.vertices:
+			mesh2.sorter.set(atan2(v.y - c.y, v.x - c.x), v)
+
+		mesh2.vertices = mesh2.sorter.sorted
+
+		mesh2.build_rays()
 
 	def get_aabb(mesh2):
 		ux, uy = -inf, -inf
 		lx, ly = +inf, +inf
 
-		for vertex in mesh2.vertices:
-			vx, vy = vertex.x, vertex.y
+		for v in mesh2.rays:
+			vx, vy = v.o.x, v.o.y
 
 			ux, uy = max(ux, vy), max(uy, vy)
 			lx, ly = min(lx, vy), min(ly, vy)
 
 		return Vec2(ux, uy), Vec2(lx, ly)
+
+	def project_ray(mesh2, ray2):
+		z = inf
+
+		for ray2i in mesh2.rays:
+			if proj := ray2.project_ray(ray2i):
+				z = min(z, proj)
+
+		return z

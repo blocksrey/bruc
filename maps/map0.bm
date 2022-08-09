@@ -1,15 +1,22 @@
-G                         ____
-G                         GGGG
-G
-G               P   |
-GG    GGGGGGGGGGGGGGGGG_____GG_____GGGGGGGGGGGGGGG
-G                     G____________G        ^        __      ^^    ^
-G                     G__GG________G    GGGGGGGGGG        GGGGGGGGGGGG
-G
-G              GGGG                  J     GG               CCC
-G             GCCCC    GGGGGGGGGGGGGGGG    GG               CCCCCCCCC
-CGGGGGGGGGGGGGCCCCC    GGG                 GG
-CCCCCCCCCCCCCCCCCCC    GGG                 GG>              CCCCCCCCC         |
-                                                            CCC          GGGGGGGGGGG
-                               |
-CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC         ______
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCC                                 ----
+CCCCCCCCCCCCCCCCCCCCCCCCC                                  wwww                  C
+CCCCCCCCCCCCCCCCCCCCCCCC                                                     CCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCC                        P   |                     CCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCC    wwwwwwwwwwwwwwwwwwwwwwwwwww-----ww-------wwwCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCC    CCCCCCCCCCCCCwCCCCCCCCCCCwC--------------wCCC     ^        --      ^^       ^
+CCCCCCCCCCCCCCCCCCCCCCCCC            CCCCCCCCC      CCCC--ww----------C    wwwwwwwwww        wwwwwww-wwwwwww
+CCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCCCCCCCCCCCC
+CCCCCCCCCCCCCCCC   CCCCCC                       wwww                    J     ww               CCC
+CCCCCCCCCCCCCC   CCCCCCCC                      wCCCw    wwwwwwwwwwwwwwwwww    ww               CCCCCCCC--CC
+CCCCCCCCCCCC     CCCCCCCwwwwwwwwwwwwwwwwwwwwwwwCCCCC    CCCCCCCCCCCCCCC       ww>
+CCCCCCCCCC        CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC     CCC    CCCCCC         ww>              CCCCCCCCCCCC         |
+CCCCCCCCC                      CCCCC          CCC        C         C                           CCC             wwwwwwwwwww
+CCCCCCCCC
+CCCCCCCCCCCC                                                     |
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC       CCCCCCCCCC--------CCCCCCCCCCCCCCCCCCCCCC         ------
+CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCWWWWWWWWWWWWWWWWCCCCCCCCCCCCCCCCC 

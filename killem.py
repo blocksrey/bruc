@@ -18,7 +18,6 @@ if RELEASE:
 
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-glClearColor(0, 0, 0.2, 0)
 
 
 
@@ -30,28 +29,12 @@ glClearColor(0, 0, 0.2, 0)
 
 
 
+from ray2 import Ray2
+from mesh2 import Mesh2
 
+the_mesh = Mesh2((Vec2(-4, -3), Vec2(4, -4), Vec2(-4, 3), Vec2(4, 3)))
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+print(the_mesh.project_ray(Ray2(Vec2(3.9, -14), Vec2(0, 20))))
 
 
 
@@ -81,6 +64,55 @@ class State:
 		pass
 
 state0 = State()
+
+
+
+
+
+
+
+class Sequencer:
+	def __init__(sequencer):
+		sequencer.queue = []
+
+	def call(sequencer, time):
+		sequencer.queue.append(time)
+
+	def dump(sequencer, time):
+		#print(sequencer.queue)
+		pass
+
+
+
+ammo = 3
+
+lastshot = 0
+def get_cooldown(et):
+	lastshot = et
+	print("shoot @", t)
+	return 0.1
+
+sequencer0 = Sequencer()
+
+sequencer0.dump(3)
+sequencer0.call(get_cooldown)
+sequencer0.dump(3.1)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -145,7 +177,7 @@ def edit_rect(i, p, s, c):
 from math import tan, pi
 
 def glPerspective(vt, ar, z0, z1):
-		hh = tan(vt/180*pi)*z0
+		hh = tan(pi/180*vt)*z0
 		hw = ar*hh
 		glFrustum(-hw, hw, -hh, hh, z0, z1)
 
@@ -218,7 +250,7 @@ def edit_bullet(i, p, d):
 	bullet_poss[8*i + 6] = px + rs + hc
 	bullet_poss[8*i + 7] = py - rc + hs
 
-	bullet_opac[i] = (2)*pi*r/(pi*r + 2*h) # (circular_area ./ h->0)/circular_area
+	bullet_opac[i] = (6)*pi*r/(pi*r + 2*h) # whatever*(circular_area ./ h->0)/circular_area
 
 if VAO_MODE:
 	def draw_bullets():
@@ -340,9 +372,9 @@ else:
 
 
 char_cols = {}
-char_cols['G'] = Vec3(0, 0.75, 0)
+char_cols['w'] = Vec3(0, 0.75, 0)
 char_cols['C'] = Vec3(0.5, 0.5, 0.5)
-char_cols['_'] = Vec3(0.8, 0.8, 0.8)
+char_cols['-'] = Vec3(0.8, 0.8, 0.8)
 
 char_cols['^'] = Vec3(1, 0, 0)
 char_cols['>'] = Vec3(1, 0, 0)
@@ -352,26 +384,38 @@ char_cols['J'] = Vec3(1, 0, 1)
 
 char_cols['|'] = Vec3(0.5, 0.75, 1)
 
+char_cols['W'] = Vec3(0.2, 0.4, 1)
+
+char_cols['P'] = Vec3(1, 1, 0)
+
 def build_map(path):
 	iy = 0
 	for row in open(path).readlines():
+		ix1 = 0
+
 		ix = 0
-		for char in row:
-			if char == 'P':
-				global camd; camd = 20
-				global camp; camp = Vec2(ix, -4*iy)
-			elif char != ' ' and char != '\n':
-				edit_rect(add_rect(), Vec2(2*ix, -4*iy), Vec2(2, 4), char_cols[char])
-			ix += 1
+		ch = row[0]
+
+		for ch1 in row:
+			if ch != ch1:
+				sx = ix1 - ix
+
+				px, py = 2*ix, -4*iy
+				sx, sy = 2*sx, 4
+
+				if ch == '-':
+					edit_rect(add_rect(), Vec2(px, py + 0.9*sy), Vec2(sx, 0.1*sy), char_cols[ch])
+				elif ch != ' ': # newline case is handled naturally :P:P
+					edit_rect(add_rect(), Vec2(px, py), Vec2(sx, sy), char_cols[ch])
+
+				ix = ix1
+				ch = ch1
+
+			ix1 += 1
 		iy += 1
 
 
 
-def cang(t):
-	return Vec2(cos(t), sin(t))
-
-def cmul(a, b):
-	return Vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x)
 
 
 
@@ -399,21 +443,16 @@ def step(dt):
 	global camd; camd = 40 + 20*sin(tick)
 
 	camo_spring.step(0, 12, 0.4, dt)
-	global camo; camo = cang(camo_spring.p)
+	global camo; camo = Vec2.cang(camo_spring.p)
 
-	global camp; camp = Vec2(40 + 20*sin(0.5*tick), -6 + 10*cos(0.4*tick))
-
-	#global bullets; bullet = {}
-	#bullet['i'] = add_bullet()
-	#bullet['p'] = Vec2(m0x, m0y)
-	#bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
-	#bullets += (bullet, )
+	global camp; camp = Vec2(80 + 20*sin(0.5*tick), -20 + 10*cos(0.4*tick))
 
 	for bullet in bullets:
-		bullet['p'] += Vec2(dt, dt)*bullet['v'] + Vec2(0.5*dt*dt, 0.5*dt*dt)*accel
-		bullet['v'] += Vec2(dt, dt)*accel
-		edit_bullet(bullet['i'], bullet['p'], Vec2(dt, dt)*bullet['v'])
-		#edit_bullet(bullet['i'], Vec2(camp.x, camp.y), Vec2(m1x - m0x, m1y - m0y))
+		#vm = bullet['v'].norm()
+		#ac = -p
+		bullet['p'] += bullet['v']*dt + accel*0.5*dt*dt
+		bullet['v'] += accel*dt
+		edit_bullet(bullet['i'], bullet['p'], bullet['v']*dt)
 
 	for character_index in characters:
 		this_tick = tick*14
@@ -425,7 +464,7 @@ def step(dt):
 
 		ori = 0.2*sin(this_tick)
 
-		edit_character(character_index, Vec2(20 + 20*cos(tick + character_index) + ox, -10*sin(tick*0.9 + character_index) + oy), Vec2(cos(ori), sin(ori)))
+		edit_character(character_index, Vec2(60 + 20*cos(tick + character_index) + ox, -10*sin(tick*0.9 + character_index) + oy), Vec2(cos(ori), sin(ori)))
 
 pyglet.clock.schedule_interval(step, 1/60) # this is bad but whatever
 
@@ -458,11 +497,14 @@ label = pyglet.text.Label('hello', x = 10, y = 10)
 
 
 
+
+
 if VAO_MODE:
 	@window0.event
 	def on_resize(sx, sy):
 		#state0.set('wins', Vec2(sx, sy))
 		update_wins_uniforms(Vec2(sx, sy))
+		pass
 
 	def draw_scene():
 		glClear(GL_COLOR_BUFFER_BIT) # can't make this assumption (i want better state management)
@@ -481,9 +523,14 @@ if VAO_MODE:
 		glUniform2f(bullet_camo_uniform, camo.x, camo.y)
 		draw_bullets()
 else:
+	@window0.event
+	def on_resize(sx, sy):
+		glViewport(0, 0, sx, sy)
+
 	def draw_scene():
+		glClearColor(0.2*(1 + sin(tick)), 0.2*(1 + cos(tick)), 0, 0)
+
 		glClear(GL_COLOR_BUFFER_BIT)
-		glViewport(0, 0, window0.width, window0.height)
 
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
@@ -504,58 +551,6 @@ else:
 
 
 
-
-
-
-
-
-from sorter import Sorter
-
-sorter0 = Sorter()
-sorter0.set(1, "PENIS")
-sorter0.set(2, "PENIS")
-sorter0.set(3, "PENIS")
-sorter0.set(-0.4, "PasdENIS")
-sorter0.set(-0.2, "PENIS1")
-
-print(sorter0.sorted)
-print(sorter0.sorted)
-
-cool_spring = Spring(0, 0)
-
-
-
-
-
-
-
-
-class Sequencer:
-	def __init__(sequencer):
-		sequencer.queue = []
-
-	def call(sequencer, time):
-		sequencer.queue.append(time)
-
-	def dump(sequencer, time):
-		#print(sequencer.queue)
-		pass
-
-
-
-ammo = 3
-
-lastshot = 0
-def get_cooldown(et):
-	lastshot = et
-	print("shoot @", t)
-	return 0.1
-
-sequencer0 = Sequencer()
-
-sequencer0.dump(3)
-sequencer0.call(get_cooldown)
-sequencer0.dump(3.1)
 
 
 
@@ -599,7 +594,7 @@ def on_mouse_release(px, py, code, mod):
 	global bullets; bullet = {}
 	bullet['i'] = add_bullet()
 	bullet['p'] = Vec2(m0x, m0y)
-	bullet['v'] = Vec2(10, 10)*Vec2(m1x - m0x, m1y - m0y)
+	bullet['v'] = Vec2(m1x - m0x, m1y - m0y)*10
 	bullets += (bullet, )
 
 	global characters; characters += (add_character(), )
@@ -613,8 +608,6 @@ def on_mouse_motion(px, py, dx, dy):
 
 @window0.event
 def on_draw():
-	glClearColor(0, 0, 0, 1)
-
 	#state0.call('draw')
 	draw_scene()
 
@@ -624,8 +617,6 @@ def on_draw():
 
 	glMatrixMode(GL_MODELVIEW)
 	glLoadIdentity()
-
-	glClearColor(0, 0, 1, 0)
 
 	#label.draw()
 
