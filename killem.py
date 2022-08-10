@@ -24,7 +24,9 @@ glClearColor(1, 1, 1, 1)
 
 
 
-
+camp = Vec2(0, 0)
+camd = 1
+camo = Vec2(1, 0)
 
 
 
