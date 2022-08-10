@@ -3,6 +3,7 @@ from ray2 import Ray2
 from math import inf, atan2
 from sorter import Sorter
 
+
 class Mesh2:
 	def __init__(mesh2, vertices):
 		mesh2.sorter = Sorter()

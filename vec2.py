@@ -1,5 +1,6 @@
 from math import sqrt, atan2, cos, sin
 
+
 class Vec2:
 	def __init__(a, x, y):
 		a.x, a.y = x, y

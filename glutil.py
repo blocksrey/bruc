@@ -1,6 +1,7 @@
 from pyglet.gl import *
 from ctypes import *
 
+
 class Shader:
 	def __init__(shader, path, type):
 		shader.id = glCreateShader(type)
@@ -10,6 +11,7 @@ class Shader:
 		source_length = c_int(len(source))
 
 		glShaderSource(shader.id, 1, byref(source_buffer_pointer), source_length)
+
 
 class Program:
 	def __init__(program, *shaders):
@@ -31,11 +33,13 @@ class Program:
 	def use(program):
 		glUseProgram(program.id)
 
+
 uniform_callbacks = {}
 uniform_callbacks[1] = glUniform1f
 uniform_callbacks[2] = glUniform2f
 uniform_callbacks[3] = glUniform3f
 uniform_callbacks[4] = glUniform4f
+
 
 class Uniform:
 	def __init__(uniform, name):

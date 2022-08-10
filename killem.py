@@ -6,6 +6,7 @@ from math import cos, sin, atan2, sqrt
 import pyglet
 from pyglet.gl import *
 from glutil import *
+from camera import *
 
 window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
 
