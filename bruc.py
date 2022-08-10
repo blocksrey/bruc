@@ -1,4 +1,4 @@
-print('Start Killem 2D Client')
+print('start bruc client')
 
 import vec2; from vec2 import Vec2
 import vec3; from vec3 import Vec3
@@ -7,7 +7,7 @@ import pyglet
 from pyglet.gl import *
 from glutil import *
 
-window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
+window0 = pyglet.window.Window(222, 173, 'bruc', 1) # easter egg much?
 
 VAO_MODE = gl_info.have_version(2) and 0
 GLOBAL_ACCELERATION = Vec2(0, -128)

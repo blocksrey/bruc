@@ -1,5 +1,5 @@
-# Killem 2D (TechWise Summer Project)
-A multiplayer 2D shooty thing written in Python 3
+# bruc: A TechWise Summer Project
+A multiplayer 2D shooty thing written in Python
 
 ![](assets/bullets.gif)
 
@@ -15,10 +15,10 @@ pacman -S python38
 ## Execution
 Running the game client:
 ```sh
-python killem.py
+python bruc.py
 ```
 
 And for the server:
 ```sh
-python killems.py
+python brucs.py
 ```
