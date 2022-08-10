@@ -1,28 +1,31 @@
-from math import sqrt, atan2, cos, sin
+from math import sqrt,atan2,cos,sin
 
 class Vec2:
-	def __init__(a, x, y):
-		a.x, a.y = x, y
+	def __init__(a,x,y):
+		a.x,a.y = x,y
 
-	def __add__(a, b):
-		return isinstance(b, Vec2) and Vec2(a.x+b.x, a.y+b.y) or Vec2(a.x+b, a.y+b)
+	def __repr__(a):
+		return 'Vec2({},{})'.format(a.x,a.y)
 
-	def __sub__(a, b):
-		return isinstance(b, Vec2) and Vec2(a.x-b.x, a.y-b.y) or Vec2(a.x-b, a.y-b)
+	def __add__(a,b):
+		return isinstance(b,Vec2) and Vec2(a.x+b.x,a.y+b.y) or Vec2(a.x+b,a.y+b)
 
-	def __mul__(a, b):
-		return isinstance(b, Vec2) and Vec2(a.x*b.x, a.y*b.y) or Vec2(a.x*b, a.y*b)
+	def __sub__(a,b):
+		return isinstance(b,Vec2) and Vec2(a.x-b.x,a.y-b.y) or Vec2(a.x-b,a.y-b)
 
-	def __truediv__(a, b): # wtf
-		return isinstance(b, Vec2) and Vec2(a.x/b.x, a.y/b.y) or Vec2(a.x/b, a.y/b)
+	def __mul__(a,b):
+		return isinstance(b,Vec2) and Vec2(a.x*b.x,a.y*b.y) or Vec2(a.x*b,a.y*b)
 
-	def __mod__(a, b):
-		return isinstance(b, Vec2) and Vec2(a.x%b.x, a.y%b.y) or Vec2(a.x%b, a.y%b)
+	def __truediv__(a,b): # wtf
+		return isinstance(b,Vec2) and Vec2(a.x/b.x,a.y/b.y) or Vec2(a.x/b,a.y/b)
+
+	def __mod__(a,b):
+		return isinstance(b,Vec2) and Vec2(a.x%b.x,a.y%b.y) or Vec2(a.x%b,a.y%b)
 
 	def __neg__(a):
-		return Vec2(-a.x, -a.y)
+		return Vec2(-a.x,-a.y)
 
-	def dot(a, b):
+	def dot(a,b):
 		return a.x*b.x+a.y*b.y
 
 	def norm(a):
@@ -30,16 +33,27 @@ class Vec2:
 
 	def unit(a):
 		l = sqrt(a.x*a.x+a.y*a.y)
-		return Vec2(a.x/l, a.y/l)
+		return Vec2(a.x/l,a.y/l)
 
 	def polar(a):
-		return sqrt(a.x*a.x+a.y*a.y), atan2(a.y, a.x)
+		return sqrt(a.x*a.x+a.y*a.y),atan2(a.y,a.x)
 
-	def cmul(a, b):
-		return Vec2(a.x*b.x - a.y*b.y, a.x*b.y + a.y*b.x)
-
-	def cang(t):
-		return Vec2(cos(t), sin(t))
+	def cmul(a,b):
+		return Vec2(a.x*b.x-a.y*b.y,a.x*b.y+a.y*b.x)
 
 	def perp(a):
-		return Vec2(-a.y, a.x)
+		return Vec2(-a.y,a.x)
+
+	def prep(a):
+		return Vec2(a.y,-a.x)
+
+	def reflect(a,n):
+		return a-n*a.dot(n)*2
+
+	def project_norm(a,n):
+		return a-n*a.dot(n)
+
+null = Vec2(0, 0)
+
+def cang(t):
+	return Vec2(cos(t),sin(t))

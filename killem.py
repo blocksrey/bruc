@@ -1,7 +1,7 @@
 print('Start Killem 2D Client')
 
-from vec2 import Vec2
-from vec3 import Vec3
+import vec2; from vec2 import Vec2
+import vec3; from vec3 import Vec3
 from math import cos, sin, atan2, sqrt
 import pyglet
 from pyglet.gl import *
@@ -10,6 +10,7 @@ from glutil import *
 window0 = pyglet.window.Window(222, 173, 'Killem 2D', 1) # easter egg much?
 
 VAO_MODE = gl_info.have_version(2) and 0
+GLOBAL_ACCELERATION = Vec2(0, -128)
 
 RELEASE = 0
 if RELEASE:
@@ -18,23 +19,13 @@ if RELEASE:
 
 glEnable(GL_BLEND)
 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+glClearColor(1, 1, 1, 1)
 
 
 
 
 
 
-
-
-
-
-
-from ray2 import Ray2
-from mesh2 import Mesh2
-
-the_mesh = Mesh2((Vec2(-4, -3), Vec2(4, -4), Vec2(-4, 3), Vec2(4, 3)))
-
-print(the_mesh.project_ray(Ray2(Vec2(3.9, -14), Vec2(0, 20))))
 
 
 
@@ -71,6 +62,8 @@ state0 = State()
 
 
 
+# this might change my life as a programmer
+
 class Sequencer:
 	def __init__(sequencer):
 		sequencer.queue = []
@@ -89,7 +82,7 @@ ammo = 3
 lastshot = 0
 def get_cooldown(et):
 	lastshot = et
-	print("shoot @", t)
+	print('shoot @', t)
 	return 0.1
 
 sequencer0 = Sequencer()
@@ -116,72 +109,86 @@ sequencer0.dump(3.1)
 
 
 
+from mesh2 import Mesh2
 
-
-
-
-
-
-
-
-# this needs to not be here (opengl < 2.x)
-#rect_program = Program(
-#	Shader('shaders/rectv.glsl', GL_VERTEX_SHADER),
-#	Shader('shaders/rectf.glsl', GL_FRAGMENT_SHADER)
-#)
-#
-#rect_camd_uniform = glGetUniformLocation(rect_program.id, b'camd')
-#rect_camp_uniform = glGetUniformLocation(rect_program.id, b'camp')
-#rect_camo_uniform = glGetUniformLocation(rect_program.id, b'camo')
-#rect_wins_uniform = glGetUniformLocation(rect_program.id, b'wins')
 
 rect_inde = -1
 rect_poss = []
 rect_cols = []
+collision_meshes = []
 
-def add_rect():
-	global rect_inde; rect_inde += 1
-	global rect_poss; rect_poss += (0, )*8 # this is probably slow
-	global rect_cols; rect_cols += (0, )*12
+class Terrain:
+	def __init__(self, p, s, c):
+		global rect_inde; rect_inde += 1
+		global rect_poss; rect_poss += [None]*8 # this is probably slow
+		global rect_cols; rect_cols += [None]*12
 
-	return rect_inde
+		self.i = rect_inde
 
-def edit_rect(i, p, s, c):
-	px, py = p.x, p.y
-	sx, sy = s.x, s.y
-	cx, cy, cz = c.x, c.y, c.z
+		global collision_meshes; collision_meshes += [Mesh2([vec2.null])]
 
-	rect_poss[8*i + 0] = px + 1*sx
-	rect_poss[8*i + 1] = py + 1*sy
-	rect_poss[8*i + 2] = px + 1*sx
-	rect_poss[8*i + 3] = py + 0*sy
-	rect_poss[8*i + 4] = px + 0*sx
-	rect_poss[8*i + 5] = py + 0*sy
-	rect_poss[8*i + 6] = px + 0*sx
-	rect_poss[8*i + 7] = py + 1*sy
+		self.edit(p, s, c)
 
-	rect_cols[12*i +  0] = cx
-	rect_cols[12*i +  1] = cy
-	rect_cols[12*i +  2] = cz
-	rect_cols[12*i +  3] = cx
-	rect_cols[12*i +  4] = cy
-	rect_cols[12*i +  5] = cz
-	rect_cols[12*i +  6] = cx
-	rect_cols[12*i +  7] = cy
-	rect_cols[12*i +  8] = cz
-	rect_cols[12*i +  9] = cx
-	rect_cols[12*i + 10] = cy
-	rect_cols[12*i + 11] = cz
+	def edit(self, p, s, c):
+		i = self.i
+		px, py = p.x, p.y
+		sx, sy = s.x, s.y
+		cx, cy, cz = c.x, c.y, c.z
+
+		rect_poss[8*i + 0] = px + 1*sx
+		rect_poss[8*i + 1] = py + 1*sy
+		rect_poss[8*i + 2] = px + 1*sx
+		rect_poss[8*i + 3] = py + 0*sy
+		rect_poss[8*i + 4] = px + 0*sx
+		rect_poss[8*i + 5] = py + 0*sy
+		rect_poss[8*i + 6] = px + 0*sx
+		rect_poss[8*i + 7] = py + 1*sy
+
+		rect_cols[12*i +  0] = cx
+		rect_cols[12*i +  1] = cy
+		rect_cols[12*i +  2] = cz
+		rect_cols[12*i +  3] = cx
+		rect_cols[12*i +  4] = cy
+		rect_cols[12*i +  5] = cz
+		rect_cols[12*i +  6] = cx
+		rect_cols[12*i +  7] = cy
+		rect_cols[12*i +  8] = cz
+		rect_cols[12*i +  9] = cx
+		rect_cols[12*i + 10] = cy
+		rect_cols[12*i + 11] = cz
+
+		collision_meshes[i].update_vertices([
+			Vec2(px + 1*sx, py + 1*sy),
+			Vec2(px + 1*sx, py + 0*sy),
+			Vec2(px + 0*sx, py + 0*sy),
+			Vec2(px + 0*sx, py + 1*sy)
+		])
 
 
-from math import tan, pi
 
-def glPerspective(vt, ar, z0, z1):
-		hh = tan(pi/180*vt)*z0
-		hw = ar*hh
-		glFrustum(-hw, hw, -hh, hh, z0, z1)
 
-if VAO_MODE:
+
+
+
+
+
+
+
+
+
+
+
+if VAO_MODE: # OpenGL 2.x
+	rect_program = Program(
+		Shader('shaders/rectv.glsl', GL_VERTEX_SHADER),
+		Shader('shaders/rectf.glsl', GL_FRAGMENT_SHADER)
+	)
+
+	rect_camd_uniform = glGetUniformLocation(rect_program.id, b'camd')
+	rect_camp_uniform = glGetUniformLocation(rect_program.id, b'camp')
+	rect_camo_uniform = glGetUniformLocation(rect_program.id, b'camo')
+	rect_wins_uniform = glGetUniformLocation(rect_program.id, b'wins')
+
 	def draw_rects():
 		pyglet.graphics.draw(
 			4*(rect_inde + 1),
@@ -205,54 +212,41 @@ else:
 
 
 
-#bullet_program = Program(
-#	Shader('shaders/bulletv.glsl', GL_VERTEX_SHADER),
-#	Shader('shaders/bulletf.glsl', GL_FRAGMENT_SHADER)
-#)
-#
-#bullet_camd_uniform = glGetUniformLocation(bullet_program.id, b'camd')
-#bullet_camp_uniform = glGetUniformLocation(bullet_program.id, b'camp')
-#bullet_camo_uniform = glGetUniformLocation(bullet_program.id, b'camo')
-#bullet_wins_uniform = glGetUniformLocation(bullet_program.id, b'wins')
+
+
+from math import tan, pi
+
+def glPerspective(vt, ar, z0, z1):
+		hh = tan(pi/180*vt)*z0
+		hw = ar*hh
+		glFrustum(-hw, hw, -hh, hh, z0, z1)
+
+
+
+
 
 bullet_inde = -1
 bullet_poss = []
 bullet_opac = []
 
-def add_bullet():
+def add_bullet_geometry():
 	global bullet_inde; bullet_inde += 1
-	global bullet_poss; bullet_poss += (0, )*8
-	global bullet_opac; bullet_opac += (0, )*1
+	global bullet_poss; bullet_poss += [None]*8
+	global bullet_opac; bullet_opac += [None]*1
 
 	return bullet_inde
 
-def edit_bullet(i, p, d):
-	px, py = p.x, p.y
-	dx, dy = d.x, d.y
-
-	h = sqrt(dx*dx + dy*dy)
-	r = 0.2
-
-	c, s = dx/h, dy/h # cos, sin
-
-	hc, hs = h*c, h*s
-	rc, rs = r*c, r*s
-
-	bullet_poss[8*i + 0] = px - rs + hc
-	bullet_poss[8*i + 1] = py + rc + hs
-
-	bullet_poss[8*i + 2] = px - rs
-	bullet_poss[8*i + 3] = py + rc
-
-	bullet_poss[8*i + 4] = px + rs
-	bullet_poss[8*i + 5] = py - rc
-
-	bullet_poss[8*i + 6] = px + rs + hc
-	bullet_poss[8*i + 7] = py - rc + hs
-
-	bullet_opac[i] = (6)*pi*r/(pi*r + 2*h) # whatever*(circular_area ./ h->0)/circular_area
-
 if VAO_MODE:
+	bullet_program = Program(
+		Shader('shaders/bulletv.glsl', GL_VERTEX_SHADER),
+		Shader('shaders/bulletf.glsl', GL_FRAGMENT_SHADER)
+	)
+
+	bullet_camd_uniform = glGetUniformLocation(bullet_program.id, b'camd')
+	bullet_camp_uniform = glGetUniformLocation(bullet_program.id, b'camp')
+	bullet_camo_uniform = glGetUniformLocation(bullet_program.id, b'camo')
+	bullet_wins_uniform = glGetUniformLocation(bullet_program.id, b'wins')
+
 	def draw_bullets():
 		pyglet.graphics.draw(
 			4*(bullet_inde + 1),
@@ -262,7 +256,7 @@ if VAO_MODE:
 else:
 	def draw_bullets():
 		for i in range(bullet_inde + 1):
-			glColor4f(1, 0.9, 0, bullet_opac[i])
+			glColor4f(1, 0, 0, bullet_opac[i])
 
 			glVertex2f(bullet_poss[8*i + 0], bullet_poss[8*i + 1])
 			glVertex2f(bullet_poss[8*i + 2], bullet_poss[8*i + 3])
@@ -274,6 +268,62 @@ else:
 
 
 
+#from math import floor
+
+def hsv(h, s, v):
+	C = v*s
+	m = v - C
+	h *= 6
+	X = m + C*(1 - abs(h%2 - 1))
+	C += m
+	if   h < 1: r, g, b = C, X, m
+	elif h < 2: r, g, b = X, C, m
+	elif h < 3: r, g, b = m, C, X
+	elif h < 4: r, g, b = m, X, C
+	elif h < 5: r, g, b = X, m, C
+	else:       r, g, b = C, m, X
+	return r, g, b
+
+#def hsv(h, s, v):
+#	C = v*s
+#	m = v - C
+#	h *= 6
+#	X = m + C*h
+#	C += m
+#	o = [0, 0, 0]
+#	o[floor(0.45*h%3)] = C
+#	o[floor((1 - h)%3)] = X
+#	o[floor((2 - 0.5*h)%3)] = m
+#	return tuple(o)
+
+#from random import random
+#for x in range(40):
+#	r, g, b = random(), random(), random()
+#	h0, s0, v0 = hsv0(r, g, b)
+#	h1, s1, v1 = hsv(r, g, b)
+#	print(h0, s0, v0)
+#	print(h1, s1, v1)
+#	print(h0 == h1 and s0 == s1 and v0 == v1)
+#	print()
+
+
+
+
+# this should be a standard
+def calc_skin_color(a):
+	h = 0.25*(1 - a)*a
+	s = 0.25 + 0.5*a
+	v = 1 - 0.75*a
+	return hsv(h, s, v)
+
+def calc_clothing_color(a, b, c, d):
+	h0 = a + 2*a*(a - 1)**4
+	s0 = 1 - b
+	v0 = 0.5*(1 - c*c)
+	h1 = b + 2*b*(b - 1)**4
+	s1 = 2/3*c**1.5
+	v1 = 1/3*(1 + d)*(1 - d*d)
+	return hsv(h0, s0, v0), hsv(h1, s1, v1)
 
 
 
@@ -288,54 +338,123 @@ else:
 
 
 
-
-
-
+characters = []
 
 character_inde = -1
 character_poss = []
+character_cols = []
 
-def add_character():
-	global character_inde; character_inde += 1
-	global character_poss; character_poss += (0, )*8
 
-	return character_inde
+# i need to work on state (user input's affect on the system)
 
-def edit_character(i, p, o):
-	px, py = p.x, p.y
 
-	h = 2
-	r = 0.5
 
-	c, s = -o.y, o.x
+class Character:
+	def __init__(self, p, v, c):
+		self.p = p
+		self.v = v
+		self.c = c
+		self.m = vec2.null
+		self.t = vec2.null
 
-	hc, hs = h*c, h*s
-	rc, rs = r*c, r*s
+		global character_inde; character_inde += 1
+		global character_poss; character_poss += [None]*8
+		global character_cols; character_cols += [None]*12
 
-	character_poss[8*i + 0] = px - rs + hc
-	character_poss[8*i + 1] = py + rc + hs
+		self.i = character_inde
 
-	character_poss[8*i + 2] = px - rs
-	character_poss[8*i + 3] = py + rc
+		self.edit(p, vec2.null, vec3.null)
 
-	character_poss[8*i + 4] = px + rs
-	character_poss[8*i + 5] = py - rc
+		characters.append(self)
 
-	character_poss[8*i + 6] = px + rs + hc
-	character_poss[8*i + 7] = py - rc + hs
+	def edit(self, p, o, c):
+		i = self.i
+		px, py = p.x, p.y
+		cx, cy, cz = c.x, c.y, c.z
+
+		h = 2
+		r = 0.5
+
+		c, s = -o.y, o.x
+
+		hc, hs = h*c, h*s
+		rc, rs = r*c, r*s
+
+		character_poss[8*i + 0] = px - rs + hc
+		character_poss[8*i + 1] = py + rc + hs
+
+		character_poss[8*i + 2] = px - rs
+		character_poss[8*i + 3] = py + rc
+
+		character_poss[8*i + 4] = px + rs
+		character_poss[8*i + 5] = py - rc
+
+		character_poss[8*i + 6] = px + rs + hc
+		character_poss[8*i + 7] = py - rc + hs
+
+		character_cols[12*i +  0] = cx
+		character_cols[12*i +  1] = cy
+		character_cols[12*i +  2] = cz
+		character_cols[12*i +  3] = cx
+		character_cols[12*i +  4] = cy
+		character_cols[12*i +  5] = cz
+		character_cols[12*i +  6] = cx
+		character_cols[12*i +  7] = cy
+		character_cols[12*i +  8] = cz
+		character_cols[12*i +  9] = cx
+		character_cols[12*i + 10] = cy
+		character_cols[12*i + 11] = cz
+
+	def step(self, dt):
+		p0 = self.p
+
+		self.v.x += (self.t.x - self.v.x)*dt*10
+		self.p.x += self.v.x*dt*20
+
+		self.p, self.v = aero_projectile(self.p, self.v, GLOBAL_ACCELERATION, 0.01, dt)
+
+		d = self.p - p0
+		cz, cn = map_raycast(Ray2(p0, d))
+		if d.norm() - cz > 1e-4: # touch
+			self.p = p0 + d.unit()*cz + cn*1e-4
+			self.v = self.v.project_norm(cn)
+			self.cj = 1
+		else: # air
+			self.cj = 0
+			pass
+			#print("AIR")
+
+		character_tick = 14*tick*self.t.norm()
+		s = sin(character_tick)
+		ox = 0
+		oy = s*s - 0.2
+		character_o = 0.2*sin(character_tick)
+		self.edit(self.p + Vec2(ox, oy), vec2.cang(character_o), self.c)
+
+	def jump(self):
+		if self.cj:
+			self.v.y += 40
+
+	def try_to_move_lol(self, t):
+		self.t = Vec2(t, 0)
+
+	def use(self):
+		global the_character; the_character = self
+		print('Use character', self)
 
 if VAO_MODE:
 	def draw_characters():
 		pyglet.graphics.draw(
-			4*(bullet_inde + 1),
+			4*(character_inde + 1),
 			GL_QUADS,
-			('v2f', bullet_poss)
+			('v2f', character_poss),
+			('c3f', character_cols)
 		)
 else:
 	def draw_characters():
-		glColor4f(0, 1, 1, 1)
-
 		for i in range(character_inde + 1):
+			glColor4f(character_cols[12*i + 0], character_cols[12*i + 1], character_cols[12*i + 2], 1)
+
 			glVertex2f(character_poss[8*i + 0], character_poss[8*i + 1])
 			glVertex2f(character_poss[8*i + 2], character_poss[8*i + 3])
 			glVertex2f(character_poss[8*i + 4], character_poss[8*i + 5])
@@ -404,9 +523,12 @@ def build_map(path):
 				sx, sy = 2*sx, 4
 
 				if ch == '-':
-					edit_rect(add_rect(), Vec2(px, py + 0.9*sy), Vec2(sx, 0.1*sy), char_cols[ch])
+					Terrain(Vec2(px, py + 0.9*sy), Vec2(sx, 0.1*sy), char_cols[ch])
 				elif ch != ' ': # newline case is handled naturally :P:P
-					edit_rect(add_rect(), Vec2(px, py), Vec2(sx, sy), char_cols[ch])
+					Terrain(Vec2(px, py), Vec2(sx, sy), char_cols[ch])
+
+				if ch == 'P':
+					Character(Vec2(px, py + 10), Vec2(0, 1), Vec3(*calc_skin_color(random()))).use()
 
 				ix = ix1
 				ch = ch1
@@ -419,52 +541,107 @@ def build_map(path):
 
 
 
+
+
+from math import inf
+
+def map_raycast(r):
+	fz = r.h.norm()
+	fn = vec2.null
+	for rectm in collision_meshes:
+		cz, cn = rectm.push_point(r)
+		if cz < fz:
+			fz = cz
+			fn = cn
+	return fz, fn
+
+
+
+
+
+
+
+
+
+
+
+bullets = []
+
+
+from ray2 import Ray2
+
+# projectile with drag (only accurate for small t)
+def aero_projectile(p, v, g, k, t):
+	a = g - v*v.norm()*k
+	return p + v*t + a*t*t*0.5, v + a*t # p, p'
+
+class Bullet:
+	def __init__(self, p, v):
+		self.p, self.v = p, v
+		self.i = add_bullet_geometry()
+		self.step(vec2.null, 0, 0.0001) # god dammit
+		bullets.append(self)
+
+	def step(self, g, k, dt):
+		p0 = self.p
+		self.p, self.v = aero_projectile(self.p, self.v, g, k, dt)
+		cz, cn = map_raycast(Ray2(p0, self.p - p0))
+		d = self.p - p0
+		if d.norm() - cz > 1e-4:
+			self.p = p0 + d.unit()*cz
+			self.v = self.v.reflect(cn)*0.75
+		self.edit(self.i, self.p, self.v*dt)
+
+	def edit(self, i, p, d):
+		px, py = p.x, p.y
+		dx, dy = d.x, d.y
+
+		h = sqrt(dx*dx + dy*dy) # division by 0
+		r = 0.2
+
+		c, s = dx/h, dy/h # cos, sin
+
+		hc, hs = h*c, h*s
+		rc, rs = r*c, r*s
+
+		bullet_poss[8*i + 0] = px - rs + hc
+		bullet_poss[8*i + 1] = py + rc + hs
+
+		bullet_poss[8*i + 2] = px - rs
+		bullet_poss[8*i + 3] = py + rc
+
+		bullet_poss[8*i + 4] = px + rs
+		bullet_poss[8*i + 5] = py - rc
+
+		bullet_poss[8*i + 6] = px + rs + hc
+		bullet_poss[8*i + 7] = py - rc + hs
+
+		bullet_opac[i] = (6)*pi*r/(pi*r + 2*h) # whatever*(circular_area ./ h->0)/circular_area
+
+	def destroy():
+		pass
+
+
+
 from time import time
 from random import random
 
 build_map('maps/map0.bm')
 
-bullets = []
-characters = []
-
-accel = Vec2(0, -128)
-
-tick0 = time()
-
-from spring import Spring
-camo_spring = Spring(0, 0)
-
-
-m0x, m0y = 0, 0
-m1x, m1y = 0, 0
+camo = vec2.cang(0)
+camd = 100
 
 def step(dt):
-	global tick; tick = time() - tick0
-	global camd; camd = 40 + 20*sin(tick)
-
-	camo_spring.step(0, 12, 0.4, dt)
-	global camo; camo = Vec2.cang(camo_spring.p)
-
-	global camp; camp = Vec2(80 + 20*sin(0.5*tick), -20 + 10*cos(0.4*tick))
+	global tick; tick = time()
 
 	for bullet in bullets:
-		#vm = bullet['v'].norm()
-		#ac = -p
-		bullet['p'] += bullet['v']*dt + accel*0.5*dt*dt
-		bullet['v'] += accel*dt
-		edit_bullet(bullet['i'], bullet['p'], bullet['v']*dt)
+		bullet.step(GLOBAL_ACCELERATION, 0.01, dt)
 
-	for character_index in characters:
-		this_tick = tick*14
+	#character_index = -1 # technically this state is correct because it's not in the scope of character
+	for character in characters:
+		character.step(dt)
 
-		s = sin(this_tick)
-
-		ox = 0
-		oy = s*s
-
-		ori = 0.2*sin(this_tick)
-
-		edit_character(character_index, Vec2(60 + 20*cos(tick + character_index) + ox, -10*sin(tick*0.9 + character_index) + oy), Vec2(cos(ori), sin(ori)))
+	global camp; camp = the_character.p
 
 pyglet.clock.schedule_interval(step, 1/60) # this is bad but whatever
 
@@ -486,13 +663,6 @@ def update_wins_uniforms(wins):
 
 #rect_uniform_change = state0.depend('rect_camp_uniform', 'rect_camo_uniform')
 #rect_uniform_change.before.connect(use_rect_program)
-
-
-
-
-label = pyglet.text.Label('hello', x = 10, y = 10)
-
-
 
 
 
@@ -528,7 +698,7 @@ else:
 		glViewport(0, 0, sx, sy)
 
 	def draw_scene():
-		glClearColor(0.2*(1 + sin(tick)), 0.2*(1 + cos(tick)), 0, 0)
+		#glClearColor(*hsv0(0.3*tick%1, 1, 1), 1)
 
 		glClear(GL_COLOR_BUFFER_BIT)
 
@@ -574,8 +744,28 @@ else:
 
 
 
+m0x, m0y = 0, 0
+m1x, m1y = 0, 0
 
 
+@window0.event
+def on_key_press(code, mod):
+	key = chr(code)
+	if key == ' ':
+		the_character.jump()
+	else:
+		the_character.try_to_move_lol(key == 'd' and 1 or key == 'a' and -1 or 0)
+
+@window0.event
+def on_key_release(code, mod):
+	key = chr(code)
+	if key != ' ':
+		the_character.try_to_move_lol(key == 'd' and 0 or key == 'a' and 0 or 0) # this is wrong but whatever lol
+
+
+@window0.event
+def on_mouse_scroll(px, py, dx, dy):
+	global camd; camd += 2*dy
 
 @window0.event
 def on_mouse_press(px, py, code, mod):
@@ -591,15 +781,9 @@ def on_mouse_release(px, py, code, mod):
 
 	global m1x, m1y; m1x, m1y = cx + cz*(2*px - wx)/wy, cy + cz*(2*py - wy)/wy
 
-	global bullets; bullet = {}
-	bullet['i'] = add_bullet()
-	bullet['p'] = Vec2(m0x, m0y)
-	bullet['v'] = Vec2(m1x - m0x, m1y - m0y)*10
-	bullets += (bullet, )
+	m0x, m0y = the_character.p.x, the_character.p.y
 
-	global characters; characters += (add_character(), )
-
-	camo_spring.v += 5
+	Bullet(Vec2(m0x, m0y), Vec2(m1x - m0x, m1y - m0y)*10)
 
 @window0.event
 def on_mouse_motion(px, py, dx, dy):

@@ -5,7 +5,7 @@ from sorter import Sorter
 
 class Mesh2:
 	def __init__(mesh2, vertices):
-		mesh2.sorter = Sorter()
+		#mesh2.sorter = Sorter()
 		mesh2.update_vertices(vertices)
 
 	def get_centroid(mesh2):
@@ -30,6 +30,8 @@ class Mesh2:
 	def update_vertices(mesh2, vertices):
 		mesh2.vertices = vertices
 
+		mesh2.sorter = Sorter() # THIS NEEDS TO CHANGE (SLOW!)
+
 		c = mesh2.get_centroid() # pivot
 
 		for v in mesh2.vertices:
@@ -51,11 +53,14 @@ class Mesh2:
 
 		return Vec2(ux, uy), Vec2(lx, ly)
 
-	def project_ray(mesh2, ray2):
-		z = inf
+	def push_point(mesh2, ray2):
+		fz = ray2.h.norm()
+		fn = Vec2(0, 0)
 
 		for ray2i in mesh2.rays:
-			if proj := ray2.project_ray(ray2i):
-				z = min(z, proj)
+			cz, cn = ray2.push_point(ray2i)
+			if cz < fz:
+				fz = cz
+				fn = cn
 
-		return z
+		return fz, fn
