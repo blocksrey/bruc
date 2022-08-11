@@ -1,10 +1,7 @@
-from json import loads, dumps # this works for now :/
-
-# this is explicit to avoid problems with undefined behavior
-CODEC = 'UTF-8'
+from json import loads, dumps#this works for now :/
 
 def serialize(stuff):
-	return dumps(stuff).encode(CODEC)
+	return dumps(stuff).encode()
 
 def deserialize(cantread):
-	return loads(cantread.decode(CODEC))
+	return loads(cantread.decode())

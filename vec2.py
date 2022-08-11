@@ -1,8 +1,9 @@
 from math import sqrt,atan2,cos,sin
+from vec import Vec
 
-class Vec2:
+class Vec2(Vec):
 	def __init__(a,x,y):
-		a.x,a.y = x,y
+		a.x,a.y=x,y
 
 	def __repr__(a):
 		return 'Vec2({},{})'.format(a.x,a.y)
@@ -16,7 +17,7 @@ class Vec2:
 	def __mul__(a,b):
 		return isinstance(b,Vec2) and Vec2(a.x*b.x,a.y*b.y) or Vec2(a.x*b,a.y*b)
 
-	def __truediv__(a,b): # wtf
+	def __truediv__(a,b):#wtf
 		return isinstance(b,Vec2) and Vec2(a.x/b.x,a.y/b.y) or Vec2(a.x/b,a.y/b)
 
 	def __mod__(a,b):
@@ -32,7 +33,7 @@ class Vec2:
 		return sqrt(a.x*a.x+a.y*a.y)
 
 	def unit(a):
-		l = sqrt(a.x*a.x+a.y*a.y)
+		l=sqrt(a.x*a.x+a.y*a.y)
 		return Vec2(a.x/l,a.y/l)
 
 	def polar(a):
@@ -47,13 +48,7 @@ class Vec2:
 	def prep(a):
 		return Vec2(a.y,-a.x)
 
-	def reflect(a,n):
-		return a-n*a.dot(n)*2
-
-	def project_norm(a,n):
-		return a-n*a.dot(n)
-
-null = Vec2(0, 0)
+null2=Vec2(0,0)
 
 def cang(t):
 	return Vec2(cos(t),sin(t))

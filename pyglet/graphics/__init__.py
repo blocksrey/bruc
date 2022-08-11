@@ -62,6 +62,9 @@ draws the entire batch::
     car = pyglet.sprite.Sprite(car_image, batch=batch)
     boat = pyglet.sprite.Sprite(boat_image, batch=batch)
     
+    def on_draw()
+        batch.draw()
+
 Drawing a complete batch is much faster than drawing the items in the batch
 individually, especially when those items belong to a common group.  
 
@@ -80,6 +83,9 @@ car and the boat::
     car = pyglet.sprite.Sprite(car_image, batch=batch, group=foreground)
     boat = pyglet.sprite.Sprite(boat_image, batch=batch, group=foreground)
     
+    def on_draw()
+        batch.draw()
+
 It's preferable to manage sprites and text objects within as few batches as
 possible.  If the drawing of sprites or text objects need to be interleaved
 with other drawing that does not use the graphics API, multiple batches will
@@ -177,6 +183,7 @@ def draw(size, mode, *data):
             details.
 
     """
+    glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
 
     buffers = []
     for fmt, array in data:
@@ -190,6 +197,9 @@ def draw(size, mode, *data):
         buffers.append(buffer)
 
     glDrawArrays(mode, 0, size)
+    glFlush()
+
+    glPopClientAttrib()
 
 
 def draw_indexed(size, mode, indices, *data):
@@ -206,6 +216,7 @@ def draw_indexed(size, mode, indices, *data):
             Attribute formats and data.  See the module summary for details.
 
     """
+    glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
 
     buffers = []
     for fmt, array in data:
@@ -230,6 +241,9 @@ def draw_indexed(size, mode, indices, *data):
 
     index_array = (index_c_type * len(indices))(*indices)
     glDrawElements(mode, len(indices), index_type, index_array)
+    glFlush()
+
+    glPopClientAttrib()
 
 
 def _parse_data(data):

@@ -103,9 +103,8 @@ def errcheck(result, func, arguments):
     if not context._gl_begin:
         error = gl.glGetError()
         if error:
-            print("No OpenGL context yet, error, yeah, this is bad...")
-            #msg = ctypes.cast(gl.gluErrorString(error), ctypes.c_char_p).value
-            #raise GLException(msg)
+            msg = ctypes.cast(gl.gluErrorString(error), ctypes.c_char_p).value
+            raise GLException(msg)
         return result
 
 

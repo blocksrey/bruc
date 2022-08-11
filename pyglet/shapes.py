@@ -62,6 +62,11 @@ A simple example of drawing shapes::
     line2 = shapes.Line(150, 150, 444, 111, width=4, color=(200, 20, 20), batch=batch)
     star = shapes.Star(800, 400, 60, 40, num_spikes=20, color=(255, 255, 0), batch=batch)
 
+    @window.event
+    def on_draw():
+        window.clear()
+        batch.draw()
+
     pyglet.app.run()
 
 
@@ -131,11 +136,13 @@ class _ShapeGroup(Group):
         self.blend_dest = blend_dest
 
     def set_state(self):
+        glPushAttrib(GL_COLOR_BUFFER_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(self.blend_src, self.blend_dest)
 
     def unset_state(self):
         glDisable(GL_BLEND)
+        glPopAttrib()
 
     def __eq__(self, other):
         return (other.__class__ is self.__class__ and
