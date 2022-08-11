@@ -6,26 +6,25 @@ BUFFER_SIZE=512#this is probably enough
 
 class Network:
 	#should these be created with __init__? idk
-	sockets={}
-
+	socks={}
 	on_connect=Caller()
 	on_close=Caller()
 	on_receive=Caller()
 
-	def connect(network,socket):
-		def doodoo():
-			network.sockets[socket]=None
-			network.on_connect.fire(socket)
+	def connect(self,ソケット):
+		def 入():
+			self.socks[ソケット]=None
+			self.on_connect.fire(ソケット)
 
-			while stream:=socket.recv(BUFFER_SIZE):
-				network.on_receive.fire(socket,deserialize(stream))
+			while バイト:=ソケット.recv(BUFFER_SIZE):
+				self.on_receive.fire(ソケット,deserialize(バイト))
 
-			network.on_close.fire(socket)
-			del network.sockets[socket]
-			socket.close()
+			self.on_close.fire(ソケット)
+			del self.socks[ソケット]
+			ソケット.close()
 
-		Thread(target=doodoo).start()
+		Thread(target=入).start()
 
-	def send(network,stuff):
-		for socket in network.sockets:
-			socket.send(serialize(stuff))
+	def send(self,d):
+		for ソケット in self.socks:
+			ソケット.send(serialize(d))

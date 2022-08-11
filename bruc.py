@@ -1,24 +1,60 @@
 print('start bruc client')
 
-from vec2 import Vec2,null2,cang
-from vec3 import Vec3,null3
+from v2 import v2,null2,cang
+from v3 import v3,null3
 from math import cos,sin,atan2,sqrt
 import pyglet
 from pyglet.gl import *
 from glutil import *
+from caller import caller
+
+the_window=pyglet.window.Window(222,173,'bruc')#easter egg much?
+
+on_key_press_caller=caller()
+@the_window.event
+def on_key_press(code,mod):
+	on_key_press_caller.fire(code,mod)
+
+on_key_release_caller=caller()
+@the_window.event
+def on_key_release(code,mod):
+	on_key_release_caller.fire(code,mod)
+
+on_mouse_scroll_caller=caller()
+@the_window.event
+def on_mouse_scroll(px,py,dx,dy):
+	on_mouse_scroll_caller.fire(px,py,dx,dy)
+
+on_mouse_press_caller=caller()
+@the_window.event
+def on_mouse_press(px,py,code,mod):
+	on_mouse_press_caller.fire(px,py,code,mod)
+
+on_mouse_motion_caller=caller()
+@the_window.event
+def on_mouse_release(px,py,code,mod):
+	on_mouse_motion_caller.fire(px,py,code,mod)
+
+on_draw_caller=caller()
+@the_window.event
+def on_mouse_motion(px,py,dx,dy):
+	on_mouse_motion_caller.fire(px,py,dx,dy)
+
+on_draw_caller=caller()
+@the_window.event
+def on_draw():
+	on_draw_caller.fire()
+
+on_resize_caller=caller()
+@the_window.event
+def on_resize(sx,sy):
+	on_resize_caller.fire(sx,sy)
 
 
 
-
-
-
-
-
-
-window0=pyglet.window.Window(222,173,'bruc',1)#easter egg much?
-
-VAO_MODE=gl_info.have_version(2)
-GLOBAL_ACCELERATION=Vec2(0,-128)
+SMALL=1e-6
+VAO_MODE=gl_info.have_version(2) and 0
+GLOBAL_ACCELERATION=v2(0,-128)
 
 RELEASE=0
 if RELEASE:
@@ -34,19 +70,13 @@ glClearColor(1,1,1,1)
 
 camp=null2
 camd=1
-camo=Vec2(1,0)
+camo=v2(1,0)
 
 
 
 
 
 
-
-
-
-
-
-from caller import Caller
 
 class State:
 	def __init__(*_):
@@ -56,7 +86,7 @@ class State:
 		pass
 
 	def on(*_):
-		return Caller()
+		return caller()
 
 	def call(*_):
 		pass
@@ -72,8 +102,7 @@ state0=State()
 
 
 
-#this might change my life as a programmer
-
+#this might change my life
 class Sequencer:
 	def __init__(sequencer):
 		sequencer.queue=[]
@@ -147,33 +176,35 @@ class Terrain:
 		sx,sy=s.x,s.y
 		cx,cy,cz=c.x,c.y,c.z
 
-		rectangle_p[8*i+0]=px+1*sx
-		rectangle_p[8*i+1]=py+1*sy
-		rectangle_p[8*i+2]=px+1*sx
-		rectangle_p[8*i+3]=py+0*sy
-		rectangle_p[8*i+4]=px+0*sx
-		rectangle_p[8*i+5]=py+0*sy
-		rectangle_p[8*i+6]=px+0*sx
-		rectangle_p[8*i+7]=py+1*sy
+		i8=8*i
+		rectangle_p[i8+0]=px+1*sx
+		rectangle_p[i8+1]=py+1*sy
+		rectangle_p[i8+2]=px+1*sx
+		rectangle_p[i8+3]=py+0*sy
+		rectangle_p[i8+4]=px+0*sx
+		rectangle_p[i8+5]=py+0*sy
+		rectangle_p[i8+6]=px+0*sx
+		rectangle_p[i8+7]=py+1*sy
 
-		rectangle_c[12*i+ 0]=cx
-		rectangle_c[12*i+ 1]=cy
-		rectangle_c[12*i+ 2]=cz
-		rectangle_c[12*i+ 3]=cx
-		rectangle_c[12*i+ 4]=cy
-		rectangle_c[12*i+ 5]=cz
-		rectangle_c[12*i+ 6]=cx
-		rectangle_c[12*i+ 7]=cy
-		rectangle_c[12*i+ 8]=cz
-		rectangle_c[12*i+ 9]=cx
-		rectangle_c[12*i+10]=cy
-		rectangle_c[12*i+11]=cz
+		i12=12*i
+		rectangle_c[i12+ 0]=cx
+		rectangle_c[i12+ 1]=cy
+		rectangle_c[i12+ 2]=cz
+		rectangle_c[i12+ 3]=cx
+		rectangle_c[i12+ 4]=cy
+		rectangle_c[i12+ 5]=cz
+		rectangle_c[i12+ 6]=cx
+		rectangle_c[i12+ 7]=cy
+		rectangle_c[i12+ 8]=cz
+		rectangle_c[i12+ 9]=cx
+		rectangle_c[i12+10]=cy
+		rectangle_c[i12+11]=cz
 
 		collision_meshes[i].update_vertices([
-			Vec2(px+1*sx,py+1*sy),
-			Vec2(px+1*sx,py+0*sy),
-			Vec2(px+0*sx,py+0*sy),
-			Vec2(px+0*sx,py+1*sy)
+			v2(px+1*sx,py+1*sy),
+			v2(px+1*sx,py+0*sy),
+			v2(px+0*sx,py+0*sy),
+			v2(px+0*sx,py+1*sy)
 		])
 
 
@@ -211,12 +242,14 @@ if VAO_MODE:
 else:
 	def draw_rects():
 		for i in range(rectangle_l):
-			glColor3f(rectangle_c[12*i+0],rectangle_c[12*i+1],rectangle_c[12*i+2])
+			i12=12*i
+			glColor4f(rectangle_c[i12+0],rectangle_c[i12+1],rectangle_c[i12+2],1)
 
-			glVertex2f(rectangle_p[8*i+0],rectangle_p[8*i+1])
-			glVertex2f(rectangle_p[8*i+2],rectangle_p[8*i+3])
-			glVertex2f(rectangle_p[8*i+4],rectangle_p[8*i+5])
-			glVertex2f(rectangle_p[8*i+6],rectangle_p[8*i+7])
+			i8=8*i
+			glVertex2f(rectangle_p[i8+0],rectangle_p[i8+1])
+			glVertex2f(rectangle_p[i8+2],rectangle_p[i8+3])
+			glVertex2f(rectangle_p[i8+4],rectangle_p[i8+5])
+			glVertex2f(rectangle_p[i8+6],rectangle_p[i8+7])
 
 
 
@@ -228,10 +261,10 @@ else:
 
 from math import tan,pi
 
-def glPerspective(vt,ar,z0,z1):
-		hh=tan(pi/180*vt)*z0
-		hw=ar*hh
-		glFrustum(-hw,hw,-hh,hh,z0,z1)
+def glPerspective(t,r,n,f):
+		h=tan(pi/180*t)*n
+		w=r*h
+		glFrustum(-w,w,-h,h,n,f)
 
 
 
@@ -263,10 +296,11 @@ else:
 		for i in range(bullet_l):
 			glColor4f(1,0,0,bullet_o[i])
 
-			glVertex2f(bullet_p[8*i+0],bullet_p[8*i+1])
-			glVertex2f(bullet_p[8*i+2],bullet_p[8*i+3])
-			glVertex2f(bullet_p[8*i+4],bullet_p[8*i+5])
-			glVertex2f(bullet_p[8*i+6],bullet_p[8*i+7])
+			i8=8*i
+			glVertex2f(bullet_p[i8+0],bullet_p[i8+1])
+			glVertex2f(bullet_p[i8+2],bullet_p[i8+3])
+			glVertex2f(bullet_p[i8+4],bullet_p[i8+5])
+			glVertex2f(bullet_p[i8+6],bullet_p[i8+7])
 
 
 
@@ -301,8 +335,8 @@ def calc_clothing_color(a,b,c,d):
 	s0=1-b
 	v0=0.5*(1-c*c)
 	h1=b+2*b*(b-1)**4
-	s1=2/3*c**1.5
-	v1=1/3*(1+d)*(1-d*d)
+	s1=0.66*c**1.5
+	v1=0.34*(1+d)*(1-d*d)
 	return hsv(h0,s0,v0),hsv(h1,s1,v1)
 
 
@@ -322,9 +356,9 @@ def calc_clothing_color(a,b,c,d):
 
 characters=[]
 
-character_l=0
-character_p=[]
-character_c=[]
+characters_l=0
+characters_p=[]
+characters_c=[]
 
 class Character:
 	def __init__(self,p,v,c):
@@ -335,14 +369,11 @@ class Character:
 		self.t=null2
 
 		#geometry
-		global character_l
-		self.i=character_l
-		character_l+=1
-		character_p.extend( 8*[None])
-		character_c.extend(12*[None])
-
-		#god dammit
-		self.kawatte(self.i,p,null2,null3)
+		global characters_l
+		self.i=characters_l
+		characters_l+=1
+		characters_p.extend( 8*[None])
+		characters_c.extend(12*[None])
 
 		#append so it does something i guess
 		characters.append(self)
@@ -359,30 +390,32 @@ class Character:
 		hc,hs=h*c,h*s
 		rc,rs=r*c,r*s
 
-		character_p[8*i+0]=px-rs+hc
-		character_p[8*i+1]=py+rc+hs
+		i8=i*8
+		characters_p[i8+0]=px-rs+hc
+		characters_p[i8+1]=py+rc+hs
 
-		character_p[8*i+2]=px-rs
-		character_p[8*i+3]=py+rc
+		characters_p[i8+2]=px-rs
+		characters_p[i8+3]=py+rc
 
-		character_p[8*i+4]=px+rs
-		character_p[8*i+5]=py-rc
+		characters_p[i8+4]=px+rs
+		characters_p[i8+5]=py-rc
 
-		character_p[8*i+6]=px+rs+hc
-		character_p[8*i+7]=py-rc+hs
+		characters_p[i8+6]=px+rs+hc
+		characters_p[i8+7]=py-rc+hs
 
-		character_c[12*i+ 0]=cx
-		character_c[12*i+ 1]=cy
-		character_c[12*i+ 2]=cz
-		character_c[12*i+ 3]=cx
-		character_c[12*i+ 4]=cy
-		character_c[12*i+ 5]=cz
-		character_c[12*i+ 6]=cx
-		character_c[12*i+ 7]=cy
-		character_c[12*i+ 8]=cz
-		character_c[12*i+ 9]=cx
-		character_c[12*i+10]=cy
-		character_c[12*i+11]=cz
+		i12=12*i
+		characters_c[i12+ 0]=cx
+		characters_c[i12+ 1]=cy
+		characters_c[i12+ 2]=cz
+		characters_c[i12+ 3]=cx
+		characters_c[i12+ 4]=cy
+		characters_c[i12+ 5]=cz
+		characters_c[i12+ 6]=cx
+		characters_c[i12+ 7]=cy
+		characters_c[i12+ 8]=cz
+		characters_c[i12+ 9]=cx
+		characters_c[i12+10]=cy
+		characters_c[i12+11]=cz
 
 	def step(self,dt):
 		p,v=self.p,self.v
@@ -391,21 +424,21 @@ class Character:
 		v.x+=(self.t.x-v.x)*dt*10
 		p.x+=v.x*dt*20
 
-		p,v=aero_projectile(p,v,GLOBAL_ACCELERATION,0.01,dt)
+		p,v=aero_projectile(p,v,GLOBAL_ACCELERATION,0.005,dt)
 
 		d=p-b
-		cz,cn=map_raycast(Ray2(b,d))
-		if d.norm()-cz>1e-6:#touch
-			p=b+cz*d.unit()+1e-6*cn
+		cz,cn=map_raycast(r2(b,d))
+		if d.norm()-cz>SMALL:#touch
+			p=b+cz*d.unit()+SMALL*cn
 			v=v.project(cn)
 			self.cj=1
 		else:#float
 			self.cj=0
 
 		#animate
-		character_tick=14*self.t.norm()*tick
-		s=sin(character_tick)
-		self.kawatte(self.i,p+Vec2(0,s*s-0.2),cang(0.2*s),self.c)
+		characters_tick=14*self.t.norm()*tick
+		s=sin(characters_tick)
+		self.kawatte(self.i,p+v2(0,s*s),cang(0.2*s),self.c)
 
 		self.p,self.v=p,v
 
@@ -413,8 +446,8 @@ class Character:
 		if self.cj:
 			self.v.y+=40
 
-	def try_to_move_lol(self,t):
-		self.t=Vec2(t,0)
+	def fat(self,t):
+		self.t=v2(t,0)
 
 	def use(self):
 		global the_guy
@@ -424,25 +457,24 @@ class Character:
 if VAO_MODE:
 	def draw_characters():
 		pyglet.graphics.draw(
-			4*character_l,
+			4*characters_l,
 			GL_QUADS,
-			('v2f',character_p),
-			('c3f',character_c)
+			('v2f',characters_p),
+			('c3f',characters_c)
 		)
 else:
+	import ctypes
+
 	def draw_characters():
-		for i in range(character_l):
-			glColor4f(character_c[12*i+0],character_c[12*i+1],character_c[12*i+2],1)
+		for i in range(characters_l):
+			i12=12*i
+			glColor4f(characters_c[i12+0],characters_c[i12+1],characters_c[i12+2],1)
 
-			glVertex2f(character_p[8*i+0],character_p[8*i+1])
-			glVertex2f(character_p[8*i+2],character_p[8*i+3])
-			glVertex2f(character_p[8*i+4],character_p[8*i+5])
-			glVertex2f(character_p[8*i+6],character_p[8*i+7])
-
-
-
-
-
+			i8=8*i
+			glVertex2f(characters_p[i8+0],characters_p[i8+1])
+			glVertex2f(characters_p[i8+2],characters_p[i8+3])
+			glVertex2f(characters_p[i8+4],characters_p[i8+5])
+			glVertex2f(characters_p[i8+6],characters_p[i8+7])
 
 
 
@@ -466,21 +498,21 @@ else:
 
 
 char_c={}
-char_c['w']=Vec3(0,0.75,0)
-char_c['C']=Vec3(0.5,0.5,0.5)
-char_c['-']=Vec3(0.8,0.8,0.8)
+char_c['w']=v3(0,0.75,0)
+char_c['C']=v3(0.5,0.5,0.5)
+char_c['-']=v3(0.8,0.8,0.8)
 
-char_c['^']=Vec3(1,0,0)
-char_c['>']=Vec3(1,0,0)
-char_c['<']=Vec3(1,0,0)
+char_c['^']=v3(1,0,0)
+char_c['>']=v3(1,0,0)
+char_c['<']=v3(1,0,0)
 
-char_c['J']=Vec3(1,0,1)
+char_c['J']=v3(1,0,1)
 
-char_c['|']=Vec3(0.5,0.75,1)
+char_c['|']=v3(0.5,0.75,1)
 
-char_c['W']=Vec3(0.2,0.4,1)
+char_c['W']=v3(0.2,0.4,1)
 
-char_c['P']=Vec3(1,1,0)
+char_c['P']=v3(1,1,0)
 
 def build_map(path):
 	iy=0
@@ -498,12 +530,12 @@ def build_map(path):
 				sx,sy=2*sx,4
 
 				if ch=='-':
-					Terrain(Vec2(px,py+0.9*sy),Vec2(sx,0.1*sy),char_c[ch])
+					Terrain(v2(px,py+0.9*sy),v2(sx,0.1*sy),char_c[ch])
 				elif ch!=' ':#newline case is handled naturally :P:P
-					Terrain(Vec2(px,py),Vec2(sx,sy),char_c[ch])
+					Terrain(v2(px,py),v2(sx,sy),char_c[ch])
 
 				if ch=='P':
-					Character(Vec2(px,py+10),Vec2(0,1),Vec3(*calc_skin_color(random()))).use()
+					Character(v2(px,py+10),v2(0,1),v3(*calc_skin_color(random()))).use()
 
 				ix=ix1
 				ch=ch1
@@ -543,7 +575,7 @@ def map_raycast(r):
 bullets=[]
 
 
-from ray2 import Ray2
+from r2 import r2
 
 #projectile with drag (only accurate for small t)
 def aero_projectile(p,v,g,k,t):
@@ -557,7 +589,7 @@ class Bullet:
 
 		#geometry
 		global bullet_l
-		self.i = bullet_l
+		self.i=bullet_l
 		bullet_l+=1
 		bullet_p.extend(8*[None])
 		bullet_o.extend(1*[None])
@@ -572,9 +604,9 @@ class Bullet:
 		p,v=self.p,self.v#in
 		b=p
 		p,v=aero_projectile(p,v,g,k,dt)
-		cz,cn=map_raycast(Ray2(b,p-b))
+		cz,cn=map_raycast(r2(b,p-b))
 		d=p-b
-		if d.norm()-cz>1e-6:
+		if d.norm()-cz>SMALL:
 			p=b+cz*d.unit()
 			v=0.75*v.reflect(cn)#energy reduction
 		self.kawatte(self.i,p,dt*v)
@@ -592,17 +624,15 @@ class Bullet:
 		hc,hs=h*c,h*s
 		rc,rs=r*c,r*s
 
-		bullet_p[8*i+0]=px-rs+hc
-		bullet_p[8*i+1]=py+rc+hs
-
-		bullet_p[8*i+2]=px-rs
-		bullet_p[8*i+3]=py+rc
-
-		bullet_p[8*i+4]=px+rs
-		bullet_p[8*i+5]=py-rc
-
-		bullet_p[8*i+6]=px+rs+hc
-		bullet_p[8*i+7]=py-rc+hs
+		i8=8*i
+		bullet_p[i8+0]=px-rs+hc
+		bullet_p[i8+1]=py+rc+hs
+		bullet_p[i8+2]=px-rs
+		bullet_p[i8+3]=py+rc
+		bullet_p[i8+4]=px+rs
+		bullet_p[i8+5]=py-rc
+		bullet_p[i8+6]=px+rs+hc
+		bullet_p[i8+7]=py-rc+hs
 
 		bullet_o[i]=(6)*pi*r/(pi*r+2*h)#whatever*(circular_area ./ h->0)/circular_area
 
@@ -619,16 +649,18 @@ build_map('maps/map0.bm')
 camo=cang(0)
 camd=100
 
-from spring import Spring
-cam_spring=Spring(Vec2(0,0),Vec2(0,0))
-cam_spring.step(Vec2(0,0),0.1,0.1,0.1)
+from spring import spring
+cam_spring=spring(v2(0,0),v2(0,0))
+cam_spring.step(v2(0,0),0.1,0.1,0.1)
 
 def step(dt):
+	dt=max(SMALL,dt)#this isnt so nice
+
 	global tick
-	tick=time()
+	tick=time()#GET LEFT OVER FRAME TIME OR SOMETHING (FOR EVENTS) INSTEAD OF DOING THIS TIME SHIT
 
 	for bullet in bullets:
-		bullet.step(GLOBAL_ACCELERATION,0.01,dt)
+		bullet.step(GLOBAL_ACCELERATION,0.005,dt)
 
 	for character in characters:
 		character.step(dt)
@@ -636,7 +668,7 @@ def step(dt):
 	global camp
 	camp=the_guy.p
 
-pyglet.clock.schedule_interval(step,1/60)#this is bad but whatever
+pyglet.clock.schedule(step)#this is bad but whatever
 
 
 
@@ -665,11 +697,10 @@ def update_wins_uniforms(wins):
 
 
 if VAO_MODE:
-	@window0.event
-	def on_resize(sx,sy):
-		#state0.set('wins',Vec2(sx,sy))
-		update_wins_uniforms(Vec2(sx,sy))
-		pass
+	def _(sx,sy):
+		#state0.set('wins',v2(sx,sy))
+		update_wins_uniforms(v2(sx,sy))
+	on_resize_caller.connect(_)
 
 	def draw_scene():
 		glClear(GL_COLOR_BUFFER_BIT)#can't make this assumption (i want better state management)
@@ -690,16 +721,12 @@ if VAO_MODE:
 		glUniform2f(bullet_camo_uniform,camo.x,camo.y)
 		draw_bullets()
 else:
-	@window0.event
-	def on_resize(sx,sy):
-		glViewport(0,0,sx,sy)
-
 	def draw_scene():
 		glClear(GL_COLOR_BUFFER_BIT)
 
 		glMatrixMode(GL_PROJECTION)
 		glLoadIdentity()
-		glPerspective(45,window0.width/window0.height,0.1,1000)
+		glPerspective(45,the_window.width/the_window.height,0.1,1000)
 
 		glRotatef(180/pi*atan2(-camo.y,camo.x),0,0,1)
 		glTranslatef(-camp.x,-camp.y,-camd)
@@ -743,58 +770,86 @@ m0x,m0y=0,0
 m1x,m1y=0,0
 
 
-@window0.event
-def on_key_press(code,mod):
-	key=chr(code)
-	if key==' ':
-		the_guy.jump()
-	else:
-		the_guy.try_to_move_lol(key=='d' and 1 or key=='a' and -1 or 0)
 
-@window0.event
-def on_key_release(code,mod):
-	key=chr(code)
-	if key!=' ':
-		the_guy.try_to_move_lol(key=='d' and 0 or key=='a' and 0 or 0)#this is wrong but whatever lol
-
-
-@window0.event
-def on_mouse_scroll(px,py,dx,dy):
-	global camd
-	camd+=2*dy
-
-@window0.event
-def on_mouse_press(px,py,code,mod):
-	p=Vec2(px,py)
-	w=Vec2(window0.width,window0.height)
-	c=Vec2(camp.x,camp.y)
-	s=c+camd/w.y*(2*p-w)
-	Bullet(the_guy.p,200*(s-the_guy.p).unit())
-
-@window0.event
-def on_mouse_release(px,py,code,mod):
-	pass
-
-@window0.event
-def on_mouse_motion(px,py,dx,dy):
-	#state0.set('mouse_position',Vec2(px,py))
-	pass
-
-label=pyglet.text.Label('hello world',font_size=40,x=0.5*window0.width,y=0.5*window0.height)
+label=pyglet.text.Label('hello world',font_size=40,x=0.5*the_window.width,y=0.5*the_window.height)
 label.color=(0,0,0,255)
 
-@window0.event
-def on_draw():
+
+
+
+
+
+
+def _():
 	#state0.call('draw')
 	draw_scene()
 
 	glMatrixMode(GL_PROJECTION)
 	glLoadIdentity()
-	glOrtho(0,window0.width,0,window0.height,-1,1)
+	glOrtho(0,the_window.width,0,the_window.height,-1,1)
 
-	#glMatrixMode(GL_MODELVIEW)
-	#glLoadIdentity()
+	glMatrixMode(GL_MODELVIEW)
+	glLoadIdentity()
 
 	label.draw()
+on_draw_caller.connect(_)
+
+def _(code,mod):
+	key=chr(code)
+	if key==' ':
+		the_guy.jump()
+	else:
+		the_guy.fat(key=='d' and 1 or key=='a' and -1 or 0)
+on_key_press_caller.connect(_)
+
+def _(code,mod):
+	key=chr(code)
+	if key!=' ':
+		the_guy.fat(key=='d' and 0 or key=='a' and 0 or 0)#this is wrong but whatever lol
+on_key_release_caller.connect(_)
+
+def _(px,py,dx,dy):
+	global camd
+	camd+=2*dy
+on_mouse_scroll_caller.connect(_)
+
+def _(px,py,code,mod):
+	p=v2(px,py)
+	w=v2(the_window.width,the_window.height)
+	c=v2(camp.x,camp.y)
+	s=c+camd/w.y*(2*p-w)
+	Bullet(the_guy.p,200*(s-the_guy.p).unit())
+on_mouse_press_caller.connect(_)
+
+def _(sx,sy):
+	glViewport(0,0,sx,sy)
+on_resize_caller.connect(_)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 pyglet.app.run()

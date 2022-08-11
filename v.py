@@ -1,5 +1,5 @@
 #geometric functions
-class Vec:
+class v:
 	def project(a,n):
 		return a-a.dot(n)*n
 

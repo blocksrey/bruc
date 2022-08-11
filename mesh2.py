@@ -1,7 +1,7 @@
-from vec2 import Vec2,null2
-from ray2 import Ray2
+from v2 import v2,null2
+from r2 import r2
 from math import inf,atan2
-from sorter import Sorter
+from sorty import sorty
 
 class Mesh2:
 	def __init__(self,v):
@@ -13,11 +13,11 @@ class Mesh2:
 		for i in range(n):
 			va=self._vs[i]
 			vb=self._vs[(i+1)%n]
-			self._rs.append(Ray2(va,vb-va))
+			self._rs.append(r2(va,vb-va))
 
 	def update_vertices(self,v):
 		self._vs=v
-		self._s=Sorter()#THIS NEEDS TO CHANGE (SLOW!)
+		self._s=sorty()#THIS NEEDS TO CHANGE (SLOW!)
 		c=self._vs[0]
 		for v in self._vs:
 			self._s.set(atan2(v.y-c.y,v.x-c.x),v)
@@ -31,13 +31,13 @@ class Mesh2:
 			vx,vy=v.o.x,v.o.y
 			ux,uy=max(ux,vy),max(uy,vy)
 			lx,ly=min(lx,vy),min(ly,vy)
-		return Vec2(ux,uy),Vec2(lx,ly)
+		return v2(ux,uy),v2(lx,ly)
 
-	def push_point(self,ray2):
-		fz=ray2.h.norm()
+	def push_point(self,r2):
+		fz=r2.h.norm()
 		fn=null2
 		for r in self._rs:
-			cz,cn=ray2.push_point(r)
+			cz,cn=r2.push_point(r)
 			if cz<fz:
 				fz=cz
 				fn=cn
