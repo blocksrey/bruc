@@ -1,7 +1,7 @@
 #geometric functions
 class Vec:
 	def project(a,n):
-		return a-n*a.dot(n)
+		return a-a.dot(n)*n
 
 	def reflect(a,n):
-		return a-n*a.dot(n)*2
+		return a-2*a.dot(n)*n

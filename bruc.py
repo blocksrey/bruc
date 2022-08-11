@@ -7,14 +7,23 @@ import pyglet
 from pyglet.gl import *
 from glutil import *
 
+
+
+
+
+
+
+
+
 window0=pyglet.window.Window(222,173,'bruc',1)#easter egg much?
 
-VAO_MODE=gl_info.have_version(2) and 0
+VAO_MODE=gl_info.have_version(2)
 GLOBAL_ACCELERATION=Vec2(0,-128)
 
-RELEASE=1
+RELEASE=0
 if RELEASE:
-	import gc;gc.disable()#no garbage collection
+	import gc
+	gc.disable()#no garbage collection
 	pyglet.options['debug_gl']=False#no debug
 
 glEnable(GL_BLEND)
@@ -120,17 +129,19 @@ collision_meshes=[]
 
 class Terrain:
 	def __init__(self,p,s,c):
-		global rectangle_l;rectangle_l+=1
-		global rectangle_p;rectangle_p.extend( 8*[None])#this is probably slow
-		global rectangle_c;rectangle_c.extend(12*[None])
+		global rectangle_l
 
-		self.i=rectangle_l-1
+		self.i=rectangle_l
 
-		global collision_meshes;collision_meshes.append(Mesh2([null2]))
+		rectangle_l+=1
+		rectangle_p.extend( 8*[None])
+		rectangle_c.extend(12*[None])
 
-		self.edit(p,s,c)
+		collision_meshes.append(Mesh2([null2]))
 
-	def edit(self,p,s,c):
+		self.kawatte(p,s,c)
+
+	def kawatte(self,p,s,c):
 		i=self.i
 		px,py=p.x,p.y
 		sx,sy=s.x,s.y
@@ -179,7 +190,7 @@ class Terrain:
 
 
 
-if VAO_MODE:#OpenGL 2.x
+if VAO_MODE:
 	rectangle_program=Program(
 		Shader('shaders/rectv.glsl',GL_VERTEX_SHADER),
 		Shader('shaders/rectf.glsl',GL_FRAGMENT_SHADER)
@@ -195,7 +206,7 @@ if VAO_MODE:#OpenGL 2.x
 			4*rectangle_l,
 			GL_QUADS,
 			('v2f',rectangle_p),
-			('c3f',rectangle_l)
+			('c3f',rectangle_c)
 		)
 else:
 	def draw_rects():
@@ -230,12 +241,6 @@ bullet_l=0
 bullet_p=[]
 bullet_o=[]
 
-def add_bullet_geometry():
-	global bullet_l;bullet_l+=1
-	global bullet_p;bullet_p.extend(8*[None])
-	global bullet_o;bullet_o.extend(1*[None])
-	return bullet_l-1
-
 if VAO_MODE:
 	bullet_program=Program(
 		Shader('shaders/bulletv.glsl',GL_VERTEX_SHADER),
@@ -268,44 +273,19 @@ else:
 
 
 
-#from math import floor
 
 def hsv(h,s,v):
-	C=v*s
-	m=v-C
+	c=v*s
+	m=v-c
 	h*=6
-	X=m+C*(1-abs(h%2-1))
-	C+=m
-	if   h<1:r,g,b=C,X,m
-	elif h<2:r,g,b=X,C,m
-	elif h<3:r,g,b=m,C,X
-	elif h<4:r,g,b=m,X,C
-	elif h<5:r,g,b=X,m,C
-	else:    r,g,b=C,m,X
-	return r,g,b
-
-#def hsv(h,s,v):
-#	C=v*s
-#	m=v-C
-#	h*=6
-#	X=m+C*h
-#	C+=m
-#	o=[0,0,0]
-#	o[floor(0.45*h%3)]=C
-#	o[floor((1-h)%3)]=X
-#	o[floor((2-0.5*h)%3)]=m
-#	return tuple(o)
-
-#from random import random
-#for x in range(40):
-#	r,g,b=random(),random(),random()
-#	h0,s0,v0=hsv0(r,g,b)
-#	h1,s1,v1=hsv(r,g,b)
-#	print(h0,s0,v0)
-#	print(h1,s1,v1)
-#	print(h0==h1 and s0==s1 and v0==v1)
-#	print()
-
+	x=m+c*(1-abs(h%2-1))
+	c+=m
+	if   h<1:return c,x,m
+	elif h<2:return x,c,m
+	elif h<3:return m,c,x
+	elif h<4:return m,x,c
+	elif h<5:return x,m,c
+	else:    return c,m,x
 
 
 
@@ -336,6 +316,8 @@ def calc_clothing_color(a,b,c,d):
 
 
 
+#i need to work on state (user input's affect on the system)
+
 
 
 characters=[]
@@ -344,31 +326,28 @@ character_l=0
 character_p=[]
 character_c=[]
 
-
-#i need to work on state (user input's affect on the system)
-
-
-
 class Character:
 	def __init__(self,p,v,c):
-		self.p=p
-		self.v=v
+		#character stuff
+		self.p,self.v=p,v
 		self.c=c
 		self.m=null2
 		self.t=null2
 
-		global character_l;character_l+=1
-		global character_p;character_p.extend( 8*[None])
-		global character_c;character_c.extend(12*[None])
+		#geometry
+		global character_l
+		self.i=character_l
+		character_l+=1
+		character_p.extend( 8*[None])
+		character_c.extend(12*[None])
 
-		self.i=character_l-1
+		#god dammit
+		self.kawatte(self.i,p,null2,null3)
 
-		self.edit(p,null2,null3)
-
+		#append so it does something i guess
 		characters.append(self)
 
-	def edit(self,p,o,c):
-		i=self.i
+	def kawatte(self,i,p,o,c):
 		px,py=p.x,p.y
 		cx,cy,cz=c.x,c.y,c.z
 
@@ -406,30 +385,29 @@ class Character:
 		character_c[12*i+11]=cz
 
 	def step(self,dt):
-		p0=self.p
+		p,v=self.p,self.v
+		b=p#before p
 
-		self.v.x+=(self.t.x-self.v.x)*dt*10
-		self.p.x+=self.v.x*dt*20
+		v.x+=(self.t.x-v.x)*dt*10
+		p.x+=v.x*dt*20
 
-		self.p,self.v=aero_projectile(self.p,self.v,GLOBAL_ACCELERATION,0.01,dt)
+		p,v=aero_projectile(p,v,GLOBAL_ACCELERATION,0.01,dt)
 
-		d=self.p-p0
-		cz,cn=map_raycast(Ray2(p0,d))
+		d=p-b
+		cz,cn=map_raycast(Ray2(b,d))
 		if d.norm()-cz>1e-6:#touch
-			self.p=p0+d.unit()*cz+cn*1e-6
-			self.v=self.v.project(cn)
+			p=b+cz*d.unit()+1e-6*cn
+			v=v.project(cn)
 			self.cj=1
-		else:#air
+		else:#float
 			self.cj=0
-			pass
-			#print("AIR")
 
-		character_tick=14*tick*self.t.norm()
+		#animate
+		character_tick=14*self.t.norm()*tick
 		s=sin(character_tick)
-		ox=0
-		oy=s*s-0.2
-		character_o=0.2*sin(character_tick)
-		self.edit(self.p+Vec2(ox,oy),cang(character_o),self.c)
+		self.kawatte(self.i,p+Vec2(0,s*s-0.2),cang(0.2*s),self.c)
+
+		self.p,self.v=p,v
 
 	def jump(self):
 		if self.cj:
@@ -439,13 +417,14 @@ class Character:
 		self.t=Vec2(t,0)
 
 	def use(self):
-		global the_character;the_character=self
+		global the_guy
+		the_guy=self
 		print('use character',self)
 
 if VAO_MODE:
 	def draw_characters():
 		pyglet.graphics.draw(
-			4*character_c,
+			4*character_l,
 			GL_QUADS,
 			('v2f',character_p),
 			('c3f',character_c)
@@ -459,10 +438,6 @@ else:
 			glVertex2f(character_p[8*i+2],character_p[8*i+3])
 			glVertex2f(character_p[8*i+4],character_p[8*i+5])
 			glVertex2f(character_p[8*i+6],character_p[8*i+7])
-
-
-
-
 
 
 
@@ -572,44 +547,44 @@ from ray2 import Ray2
 
 #projectile with drag (only accurate for small t)
 def aero_projectile(p,v,g,k,t):
-	a=g-v*v.norm()*k
-	return p+v*t+a*t*t*0.5,v+a*t#p,p'
+	a=g-k*v.norm()*v
+	return p+t*v+0.5*t*t*a,v+t*a#p,p'
 
 class Bullet:
 	def __init__(self,p,v):
-		self.p,self.v=p,v#projectile
-		self.i=add_bullet_geometry()#geometry
+		#projectile
+		self.p,self.v=p,v
 
-		self.step(null2,0,0.0001)#god dammit
+		#geometry
+		global bullet_l
+		self.i = bullet_l
+		bullet_l+=1
+		bullet_p.extend(8*[None])
+		bullet_o.extend(1*[None])
 
-		bullets.append(self)#add to stepper shit
+		#bullshit
+		self.step(null2,0,0.00001)
+
+		#add to stepper
+		bullets.append(self)
 
 	def step(self,g,k,dt):
-		p0=self.p
-		self.p,self.v=aero_projectile(self.p,self.v,g,k,dt)
-		cz,cn=map_raycast(Ray2(p0,self.p-p0))
-		d=self.p-p0
+		p,v=self.p,self.v#in
+		b=p
+		p,v=aero_projectile(p,v,g,k,dt)
+		cz,cn=map_raycast(Ray2(b,p-b))
+		d=p-b
 		if d.norm()-cz>1e-6:
-			self.p=p0+d.unit()*cz
-			self.v=self.v.reflect(cn)*0.75
-		self.edit(self.i,self.p,self.v*dt)
+			p=b+cz*d.unit()
+			v=0.75*v.reflect(cn)#energy reduction
+		self.kawatte(self.i,p,dt*v)
+		self.p,self.v=p,v#out
 
-	#make it faster
-	#def step1(self,g,k,dt):
-	#	p,v=self.p,self.v
-	#	self.p,self.v=aero_projectile(self.p,self.v,g,k,dt)
-	#	cz,cn=map_raycast(Ray2(p0,self.p-p0))
-	#	d=self.p-p0
-	#	if d.norm()-cz>1e-6:
-	#		self.p=p0+d.unit()*cz
-	#		self.v=self.v.reflect(cn)*0.75
-	#	self.edit(self.i,self.p,self.v*dt)
-
-	def edit(self,i,p,d):
+	def kawatte(self,i,p,d):
 		px,py=p.x,p.y
 		dx,dy=d.x,d.y
 
-		h=sqrt(dx*dx+dy*dy)#division by 0
+		h=sqrt(dx*dx+dy*dy)
 		r=0.2
 
 		c,s=dx/h,dy/h#cos,sin
@@ -644,8 +619,13 @@ build_map('maps/map0.bm')
 camo=cang(0)
 camd=100
 
+from spring import Spring
+cam_spring=Spring(Vec2(0,0),Vec2(0,0))
+cam_spring.step(Vec2(0,0),0.1,0.1,0.1)
+
 def step(dt):
-	global tick;tick=time()
+	global tick
+	tick=time()
 
 	for bullet in bullets:
 		bullet.step(GLOBAL_ACCELERATION,0.01,dt)
@@ -653,17 +633,13 @@ def step(dt):
 	for character in characters:
 		character.step(dt)
 
-	global camp;camp=the_character.p
+	global camp
+	camp=the_guy.p
 
 pyglet.clock.schedule_interval(step,1/60)#this is bad but whatever
 
 
 
-
-def delete_shiz(_):
-	print(gc.collect())
-
-pyglet.clock.schedule_interval(delete_shiz,4)
 
 
 def update_wins_uniforms(wins):
@@ -705,6 +681,8 @@ if VAO_MODE:
 		glUniform2f(rectangle_camo_uniform,camo.x,camo.y)
 		draw_rects()
 
+		draw_characters()
+
 		#render bullets
 		glUseProgram(bullet_program.id)
 		glUniform1f(bullet_camd_uniform,camd)
@@ -717,8 +695,6 @@ else:
 		glViewport(0,0,sx,sy)
 
 	def draw_scene():
-		#glClearColor(*hsv0(0.3*tick%1,1,1),1)
-
 		glClear(GL_COLOR_BUFFER_BIT)
 
 		glMatrixMode(GL_PROJECTION)
@@ -771,38 +747,33 @@ m1x,m1y=0,0
 def on_key_press(code,mod):
 	key=chr(code)
 	if key==' ':
-		the_character.jump()
+		the_guy.jump()
 	else:
-		the_character.try_to_move_lol(key=='d' and 1 or key=='a' and -1 or 0)
+		the_guy.try_to_move_lol(key=='d' and 1 or key=='a' and -1 or 0)
 
 @window0.event
 def on_key_release(code,mod):
 	key=chr(code)
 	if key!=' ':
-		the_character.try_to_move_lol(key=='d' and 0 or key=='a' and 0 or 0)#this is wrong but whatever lol
+		the_guy.try_to_move_lol(key=='d' and 0 or key=='a' and 0 or 0)#this is wrong but whatever lol
 
 
 @window0.event
 def on_mouse_scroll(px,py,dx,dy):
-	global camd;camd+=2*dy
+	global camd
+	camd+=2*dy
 
 @window0.event
 def on_mouse_press(px,py,code,mod):
-	cx,cy,cz=camp.x,camp.y,camd
-	wx,wy=window0.width,window0.height
-
-	global m0x,m0y;m0x,m0y=cx+cz*(2*px-wx)/wy,cy+cz*(2*py-wy)/wy
+	p=Vec2(px,py)
+	w=Vec2(window0.width,window0.height)
+	c=Vec2(camp.x,camp.y)
+	s=c+camd/w.y*(2*p-w)
+	Bullet(the_guy.p,200*(s-the_guy.p).unit())
 
 @window0.event
 def on_mouse_release(px,py,code,mod):
-	cx,cy,cz=camp.x,camp.y,camd
-	wx,wy=window0.width,window0.height
-
-	global m1x,m1y;m1x,m1y=cx+cz*(2*px-wx)/wy,cy+cz*(2*py-wy)/wy
-
-	m0x,m0y=the_character.p.x,the_character.p.y
-
-	Bullet(Vec2(m0x,m0y),Vec2(m1x-m0x,m1y-m0y)*10)
+	pass
 
 @window0.event
 def on_mouse_motion(px,py,dx,dy):

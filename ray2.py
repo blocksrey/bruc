@@ -1,7 +1,7 @@
 def bruccccccc(a,b,i,j):
 	ij=i.dot(j)
 	if ij>0:
-		return a+i*(b-a).dot(j)/ij
+		return a+(b-a).dot(j)/ij*i
 	return a+i
 
 class Ray2:
@@ -22,4 +22,4 @@ class Ray2:
 
 		if za>0 and za<la and zb>0 and zb<lb:#idc rn
 			return za,b.h.prep().unit()#perp in the other direction
-		return la,b.h*0
+		return la,0*b.h

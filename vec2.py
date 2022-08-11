@@ -9,19 +9,16 @@ class Vec2(Vec):
 		return 'Vec2({},{})'.format(a.x,a.y)
 
 	def __add__(a,b):
-		return isinstance(b,Vec2) and Vec2(a.x+b.x,a.y+b.y) or Vec2(a.x+b,a.y+b)
+		return Vec2(a.x+b.x,a.y+b.y)
 
 	def __sub__(a,b):
-		return isinstance(b,Vec2) and Vec2(a.x-b.x,a.y-b.y) or Vec2(a.x-b,a.y-b)
+		return Vec2(a.x-b.x,a.y-b.y)
 
-	def __mul__(a,b):
-		return isinstance(b,Vec2) and Vec2(a.x*b.x,a.y*b.y) or Vec2(a.x*b,a.y*b)
+	def __rmul__(a,b):
+		return isinstance(b,Vec2) and Vec2(a.x*b.x,a.y*b.x) or Vec2(a.x*b,a.y*b)
 
 	def __truediv__(a,b):#wtf
 		return isinstance(b,Vec2) and Vec2(a.x/b.x,a.y/b.y) or Vec2(a.x/b,a.y/b)
-
-	def __mod__(a,b):
-		return isinstance(b,Vec2) and Vec2(a.x%b.x,a.y%b.y) or Vec2(a.x%b,a.y%b)
 
 	def __neg__(a):
 		return Vec2(-a.x,-a.y)

@@ -9,19 +9,16 @@ class Vec3(Vec):
 		return 'Vec3({},{},{})'.format(a.x,a.y,a.z)
 
 	def __add__(a,b):
-		return isinstance(b,Vec3) and Vec3(a.x+b.x,a.y+b.y,a.z+b.z) or Vec3(a.x+b,a.y+b,a.z+b)
+		return Vec3(a.x+b.x,a.y+b.y,a.z+b.z)
 
 	def __sub__(a,b):
-		return isinstance(b,Vec3) and Vec3(a.x-b.x,a.y-b.y,a.z-b.z) or Vec3(a.x-b,a.y-b,a.z-b)
+		return Vec3(a.x-b.x,a.y-b.y,a.z-b.z)
 
-	def __mul__(a,b):
+	def __rmul__(a,b):
 		return isinstance(b,Vec3) and Vec3(a.x*b.x,a.y*b.y,a.z*b.z) or Vec3(a.x*b,a.y*b,a.z*b)
 
 	def __truediv__(a,b):#wtf
 		return isinstance(b,Vec3) and Vec3(a.x/b.x,a.y/b.y,a.z/b.z) or Vec3(a.x/b,a.y/b,a.z/b)
-
-	def __mod__(a,b):
-		return isinstance(b,Vec3) and Vec3(a.x%b.x,a.y%b.y,a.z%b.z) or Vec3(a.x%b,a.y%b,a.z%b)
 
 	def __neg__(a):
 		return Vec3(-a.x,-a.y,-a.z)

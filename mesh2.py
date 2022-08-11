@@ -4,63 +4,41 @@ from math import inf,atan2
 from sorter import Sorter
 
 class Mesh2:
-	def __init__(mesh2,vertices):
-		#mesh2.sorter=Sorter()
-		mesh2.update_vertices(vertices)
+	def __init__(self,v):
+		self.update_vertices(v)
 
-	def get_centroid(mesh2):
-		s=null2
-
-		for v in mesh2.vertices:
-			s+=v
-
-		return s/len(mesh2.vertices)
-
-	def build_rays(mesh2):
-		mesh2.rays=[]
-
-		n=len(mesh2.vertices)
-
+	def _build_rays(self):
+		self._rs=[]
+		n=len(self._vs)
 		for i in range(n):
-			va=mesh2.vertices[i]
-			vb=mesh2.vertices[(i+1)%n]
+			va=self._vs[i]
+			vb=self._vs[(i+1)%n]
+			self._rs.append(Ray2(va,vb-va))
 
-			mesh2.rays.append(Ray2(va,vb-va))
+	def update_vertices(self,v):
+		self._vs=v
+		self._s=Sorter()#THIS NEEDS TO CHANGE (SLOW!)
+		c=self._vs[0]
+		for v in self._vs:
+			self._s.set(atan2(v.y-c.y,v.x-c.x),v)
+		self._vs=self._s.sorted
+		self._build_rays()
 
-	def update_vertices(mesh2,vertices):
-		mesh2.vertices=vertices
-
-		mesh2.sorter=Sorter() # THIS NEEDS TO CHANGE (SLOW!)
-
-		c=mesh2.get_centroid() # pivot
-
-		for v in mesh2.vertices:
-			mesh2.sorter.set(atan2(v.y-c.y,v.x-c.x),v)
-
-		mesh2.vertices=mesh2.sorter.sorted
-
-		mesh2.build_rays()
-
-	def get_aabb(mesh2):
+	def get_aabb(self):
 		ux,uy=-inf,-inf
 		lx,ly=+inf,+inf
-
-		for v in mesh2.rays:
+		for v in self._rs:
 			vx,vy=v.o.x,v.o.y
-
 			ux,uy=max(ux,vy),max(uy,vy)
 			lx,ly=min(lx,vy),min(ly,vy)
-
 		return Vec2(ux,uy),Vec2(lx,ly)
 
-	def push_point(mesh2,ray2):
+	def push_point(self,ray2):
 		fz=ray2.h.norm()
 		fn=null2
-
-		for ray2i in mesh2.rays:
-			cz,cn=ray2.push_point(ray2i)
+		for r in self._rs:
+			cz,cn=ray2.push_point(r)
 			if cz<fz:
 				fz=cz
 				fn=cn
-
 		return fz,fn

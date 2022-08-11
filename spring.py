@@ -6,7 +6,7 @@ def analytical_spring(p,v,b,k,d,t):#position,velocity,target,constant,dampness,t
 	s=sin(h*k*t)
 	c=h*cos(h*k*t)#not really c, more like hc
 	y=h*exp(d*k*t)#more like hy i guess
-	return b+(k*(p-b)*(c+d*s)+v*s)/(k*y),(k*(b-p)*s+v*(c-d*s))/y#assuming k>0&&d<1
+	return b+(k*(c+s*d)*(p-b)+s*v)/(k*y),(k*s*(b-p)+(c-s*d)*v)/y#assuming k>0&&d<1
 
 class Spring:
 	def __init__(self,p,v):
