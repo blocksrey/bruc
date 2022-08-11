@@ -19,3 +19,8 @@
 - Bullet collisions
 
 - Player nameplates and nametags
+
+- Lobby
+    - Add a playlist
+    - Add option to mute sound effects
+    - Add option to mute music
