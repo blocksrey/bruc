@@ -1,7 +1,7 @@
 import socket
 import network
 
-network0=network.Network()
+network0=network.network()
 
 socket0=socket.socket(socket.AF_INET,socket.SOCK_STREAM)#IPv4,TCP
 socket0.connect(('localhost',57005))#Hehe
