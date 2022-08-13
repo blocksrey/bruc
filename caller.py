@@ -1,13 +1,13 @@
-class caller:
+class Caller:
 	def __init__(self):
-		self._c={}
+		self.callers={}
 
-	def connect(self,f):
-		self._c[f]=None
-		def d():
-			del self._c[f]
-		return d
+	def connect(self,fn):
+		self.callers[fn]=None
+		def delete():
+			del self.callers[fn]
+		return delete
 
-	def fire(self,*a):
-		for f in self._c:
-			f(*a)
+	def fire(self,*args):
+		for fn in self.callers:
+			fn(*args)

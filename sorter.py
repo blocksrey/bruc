@@ -1,5 +1,5 @@
 #variables should represent an idea
-class sorty:
+class Sorter:
 	def __init__(self):
 		self.s=[]#scores
 		self.v={}#values

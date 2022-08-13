@@ -1,15 +1,15 @@
 from serial import serialize,deserialize
 from threading import Thread
-from caller import caller
+from caller import Caller
 
 BUFFER_SIZE=512#this is probably enough
 
-class network:
+class Network:
 	#should these be created with __init__? idk
 	socks={}
-	on_connect=caller()
-	on_close=caller()
-	on_receive=caller()
+	on_connect=Caller()
+	on_close=Caller()
+	on_receive=Caller()
 
 	def connect(self,ソケット):
 		def 入():
