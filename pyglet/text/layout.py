@@ -523,11 +523,12 @@ class TextLayoutGroup(graphics.Group):
     """
 
     def set_state(self):
+        glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
 
     def unset_state(self):
-        pass
+        glPopAttrib()
 
     def __hash__(self):
         return hash((id(self.parent), GL_BLEND, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA))
@@ -554,6 +555,7 @@ class ScrollableTextLayoutGroup(graphics.Group):
     view_y = 0
 
     def set_state(self):
+        glPushAttrib(GL_ENABLE_BIT | GL_TRANSFORM_BIT | GL_CURRENT_BIT)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -566,6 +568,7 @@ class ScrollableTextLayoutGroup(graphics.Group):
     def unset_state(self):
         glTranslatef(self.view_x, self.view_y, 0)
         glDisable(GL_SCISSOR_TEST)
+        glPopAttrib()
 
     def __eq__(self, other):
         return self is other
@@ -591,6 +594,7 @@ class IncrementalTextLayoutGroup(graphics.Group):
     translate_y = 0  # y - view_y
 
     def set_state(self):
+        glPushAttrib(GL_ENABLE_BIT | GL_TRANSFORM_BIT | GL_CURRENT_BIT)
 
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -603,6 +607,7 @@ class IncrementalTextLayoutGroup(graphics.Group):
     def unset_state(self):
         glTranslatef(-self.translate_x, -self.translate_y, 0)
         glDisable(GL_SCISSOR_TEST)
+        glPopAttrib()
 
     @property
     def top(self):

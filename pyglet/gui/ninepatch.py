@@ -58,13 +58,15 @@ class NinePatchGroup(OrderedGroup):
         self.texture = texture
 
     def set_state(self):
+        glPushAttrib(GL_ENABLE_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
 
     def unset_state(self):
-        pass
+        glPopAttrib()
+
 
 class _PixelData:
     def __init__(self, image):

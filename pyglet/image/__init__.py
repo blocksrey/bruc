@@ -997,6 +997,7 @@ class ImageData(AbstractImage):
                             self.width, self.height,
                             format, type,
                             data)
+        glPopClientAttrib()
 
         if matrix:
             glPopMatrix()
@@ -1579,6 +1580,7 @@ class Texture(AbstractImage):
         buffer = (GLubyte * (self.width * self.height * self.images * len(format)))()
         glGetTexImage(self.target, self.level,
                       gl_format, GL_UNSIGNED_BYTE, buffer)
+        glPopClientAttrib()
 
         data = ImageData(self.width, self.height, format, buffer)
         if self.images > 1:
@@ -1608,10 +1610,14 @@ class Texture(AbstractImage):
             t[9], t[10], t[11], 1.,
             x1, y2, z, 1.)
 
+        glPushAttrib(GL_ENABLE_BIT)
         glEnable(self.target)
         glBindTexture(self.target, self.id)
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
         glInterleavedArrays(GL_T4F_V4F, 0, array)
         glDrawArrays(GL_QUADS, 0, 4)
+        glPopClientAttrib()
+        glPopAttrib()
 
     def blit_into(self, source, x, y, z):
         glBindTexture(self.target, self.id)
@@ -1843,10 +1849,14 @@ class TileableTexture(Texture):
             u1, v2, t[11], 1.,
             x, y + h, z, 1.)
 
+        glPushAttrib(GL_ENABLE_BIT)
         glEnable(self.target)
         glBindTexture(self.target, self.id)
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
         glInterleavedArrays(GL_T4F_V4F, 0, array)
         glDrawArrays(GL_QUADS, 0, 4)
+        glPopClientAttrib()
+        glPopAttrib()
 
     @classmethod
     def create_for_image(cls, image):
@@ -2038,6 +2048,7 @@ class BufferImage(AbstractImage):
         glPixelStorei(GL_PACK_ALIGNMENT, 1)
         glReadPixels(x, y, self.width, self.height,
                      self.gl_format, GL_UNSIGNED_BYTE, buffer)
+        glPopClientAttrib()
 
         return ImageData(self.width, self.height, self.format, buffer)
 

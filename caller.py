@@ -1,15 +1,13 @@
 class Caller:
-	def __init__(caller):
-		caller.callbacks = {}
+	def __init__(self):
+		self.callers={}
 
-	def connect(caller, func):
-		caller.callbacks[func] = None
+	def connect(self,fn):
+		self.callers[fn]=None
+		def delete():
+			del self.callers[fn]
+		return delete
 
-		def disconnect():
-			del caller.callbacks[func]
-
-		return disconnect
-
-	def fire(caller, *args):
-		for func in caller.callbacks:
-			func(*args)
+	def fire(self,*args):
+		for fn in self.callers:
+			fn(*args)

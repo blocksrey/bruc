@@ -287,6 +287,7 @@ class VertexDomain:
                 Vertex list to draw, or ``None`` for all lists in this domain.
 
         """
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
         for buffer, attributes in self.buffer_attributes:
             buffer.bind()
             for attribute in attributes:
@@ -315,6 +316,7 @@ class VertexDomain:
 
         for buffer, _ in self.buffer_attributes:
             buffer.unbind()
+        glPopClientAttrib()
 
     def _is_empty(self):
         return not self.allocator.starts
@@ -694,6 +696,7 @@ class IndexedVertexDomain(VertexDomain):
                 Vertex list to draw, or ``None`` for all lists in this domain.
 
         """
+        glPushClientAttrib(GL_CLIENT_VERTEX_ARRAY_BIT)
         for buffer, attributes in self.buffer_attributes:
             buffer.bind()
             for attribute in attributes:
@@ -729,6 +732,7 @@ class IndexedVertexDomain(VertexDomain):
         self.index_buffer.unbind()
         for buffer, _ in self.buffer_attributes:
             buffer.unbind()
+        glPopClientAttrib()
 
 
 class IndexedVertexList(VertexList):

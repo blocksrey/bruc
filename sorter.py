@@ -1,29 +1,30 @@
+#variables should represent an idea
 class Sorter:
 	def __init__(self):
-		self.scores = []
-		self.values = {}
-		self.sorted = {}
+		self.s=[]#scores
+		self.v={}#values
+		self.sorted={}#sorted
 
-	def set(self, score, value):
+	def set(self,s,v):
 		try:
-			if self.values[score]:
-				print("Score already exists: ", score)
+			if self.v[s]:
+				print('score already exists:',s)
 		except:
-			self.scores.append(score)
-			self.values[score] = value
-			self.sort() # update state :L (even if it doesn't need to be updated)
+			self.s.append(s)
+			self.v[s]=v
+			self.sort()#update state :L (even if it doesn't need to be updated)
 
-		def delete():
-			self.scores.remove(score)
-			del self.values[score]
-			self.sort() # update state :L (even if it doesn't need to be updated)
+		def 消():
+			self.s.remove(s)
+			del self.v[s]
+			self.sort()#update state :L (even if it doesn't need to be updated)
 
-		return delete
+		return 消
 
 	def sort(self):
-		self.scores.sort()
-		self.sorted = {}
-		index = 0
-		for score in self.scores:
-			self.sorted[index] = self.values[score]
-			index += 1
+		self.s.sort()
+		self.sorted={}
+		i=0
+		for s in self.s:
+			self.sorted[i]=self.v[s]
+			i+=1

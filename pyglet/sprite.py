@@ -51,6 +51,10 @@ draw event handler::
 
     window = pyglet.window.Window()
 
+    @window.event
+    def on_draw():
+        ball.draw()
+
     pyglet.app.run()
 
 The sprite can be moved by modifying the :py:attr:`~pyglet.sprite.Sprite.x` and 
@@ -83,6 +87,10 @@ entire batch of sprites is then drawn in one call::
     for i in range(100):
         x, y = i * 10, 50
         ball_sprites.append(pyglet.sprite.Sprite(ball_image, x, y, batch=batch))
+
+    @window.event
+    def on_draw():
+        batch.draw()
 
 Sprites can be freely modified in any way even after being added to a batch,
 however a sprite can belong to at most one batch.  See the documentation for
@@ -138,10 +146,12 @@ class SpriteGroup(graphics.Group):
         glEnable(self.texture.target)
         glBindTexture(self.texture.target, self.texture.id)
 
+        glPushAttrib(GL_COLOR_BUFFER_BIT)
         glEnable(GL_BLEND)
         glBlendFunc(self.blend_src, self.blend_dest)
 
     def unset_state(self):
+        glPopAttrib()
         glDisable(self.texture.target)
 
     def __repr__(self):

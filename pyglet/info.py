@@ -128,7 +128,6 @@ def dump_gl(context=None):
 
 
 
-
 def dump_glx():
     """Dump GLX info."""
     try:
