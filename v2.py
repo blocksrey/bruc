@@ -23,8 +23,8 @@ class v2(v):
 	def __neg__(a):
 		return v2(-a.x,-a.y)
 
-	def __eq__(a,b):
-		return a.x==b.x and a.y==b.y
+	#def __eq__(a,b):
+	#	return a.x==b.x and a.y==b.y
 
 	def dump(a):
 		return a.x,a.y

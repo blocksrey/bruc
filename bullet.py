@@ -37,8 +37,8 @@ class Bullet:
 		l=d.norm()
 		if h+1e-6<l:
 			p=b+(h-1e-6)/l*d
+			camera.impulse(p,v)#cam gets some of the energy
 			v=0.5*v.reflect(n)#energy reduction
-			camera.impulse(p,0.1*v)#cam gets some of the energy
 
 		#bullet geometry (super elegant ngl)
 		d=p-b

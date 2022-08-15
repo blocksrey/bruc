@@ -132,7 +132,7 @@ def _():
 		print(character.active_character.p)
 		v=200*(s-character.active_character.p).unit()
 		bullet.Bullet(character.active_character.p,v)
-		camera.impulse(character.active_character.p,0.1*v)
+		camera.impulse(character.active_character.p,v)
 		character.active_character.v-=0.05*v
 	on_mouse_press_caller.connect(_)
 
