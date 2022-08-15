@@ -20,7 +20,12 @@
 
 - Player nameplates and nametags
 
-- Lobby
-    - Add a playlist
-    - Add option to mute sound effects
-    - Add option to mute music
+- Lobby DONE
+    - Add a playlist DONE
+    - Add option to mute sound effects DONE
+    - Add option to mute music DONE
+
+    - Add option for single player
+    - Add option for multiplayer
+    - Show usernames over the user while in game
+    - Play the ingame music
