@@ -1,4 +1,4 @@
-from collidable import Collidable
+from geometry import Collidable
 from v2 import v2,cang
 from v3 import v3
 
@@ -50,4 +50,3 @@ class Map:
 
 				ix1+=1
 			iy+=1
-

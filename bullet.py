@@ -1,5 +1,5 @@
-from block import Block
-from collidable import raycast
+from geometry import Block
+from m2 import push_point
 from v2 import v2
 from v3 import v3
 from r2 import r2
@@ -32,19 +32,19 @@ class Bullet:
 		p,v=aero_projectile(p,v,GLOBAL_ACCELERATION,0.005,dt)
 
 		d=p-b
-		h,n=raycast(r2(b,d))
+		h,n=push_point(r2(b,d))
 
 		l=d.norm()
 		if h+1e-6<l:
-			p=b+h/l*d
+			p=b+(h-1e-6)/l*d
 			v=0.5*v.reflect(n)#energy reduction
 			camera.impulse(p,0.1*v)#cam gets some of the energy
 
 		#bullet geometry (super elegant ngl)
 		d=p-b
-		h=d.norm()
-		r=0.1
-		self.block.transform(p,d/h,v2(h,2*r),v3(1,0,0),(6)*pi*r/(pi*r+2*h))
+		h=0.5
+		w=d.norm() or h#lol
+		self.block.transform(p+0.5*d,d/w,v2(h+w,h),v3(1,0,0),(1)*0.5*pi*h/(0.5*pi*h+2*w))
 
 		self.p,self.v=p,v
 

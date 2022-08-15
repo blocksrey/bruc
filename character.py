@@ -1,7 +1,7 @@
 from v2 import v2,null2,cang
 from r2 import r2
-from block import Block
-from collidable import raycast
+from geometry import Block
+from m2 import push_point
 from math import sin,pi
 import camera
 
@@ -45,14 +45,12 @@ class Character:
 		p,v=aero_projectile(p,v,(GLOBAL_ACCELERATION+32*self.t).project(self.n),0.005,dt)
 		d=p-b
 		l=d.norm()
-		h,n=raycast(r2(b,d))
+		h,n=push_point(r2(b,d))
 
 		if h+1e-6<l:
-			#print('a')
 			#these are quantitatively the same but numerical stability is vastly different... (unstable one is faster but horrible for shallow angles)
-			p=b+h/l*d+1e-6*n
-			#p=b+(h-1e-6)/l*d
-			#p=b+(h-1e-6)/l*d
+			#p=b+h/l*d+1e-6*n
+			p=b+(h-1e-6)/l*d
 			v=v.project(n)
 
 		#animate

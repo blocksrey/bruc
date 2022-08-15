@@ -39,9 +39,6 @@ class v2(v):
 		l=sqrt(a.x*a.x+a.y*a.y)
 		return v2(a.x/l,a.y/l)
 
-	def polar(a):
-		return sqrt(a.x*a.x+a.y*a.y),atan2(a.y,a.x)
-
 	def cmul(a,b):
 		return v2(a.x*b.x-a.y*b.y,a.x*b.y+a.y*b.x)
 

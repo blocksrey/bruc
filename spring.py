@@ -4,7 +4,7 @@ from math import cos,sin,exp,sqrt
 def spring(p,v,b,k,d,t):#position,velocity,target,constant,dampness,time
 	h=sqrt(1-d*d)
 	s=sin(h*k*t)
-	c=h*cos(h*k*t)#not really c, more like hc
+	c=h*cos(h*k*t)#not really c more like hc
 	y=h*exp(d*k*t)#more like hy i guess
 	return b+(k*(c+s*d)*(p-b)+s*v)/(k*y),(k*s*(b-p)+(c-s*d)*v)/y#assuming k>0&&d<1
 
