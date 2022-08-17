@@ -16,7 +16,7 @@ class Camera:
 
 	def impulse(self,p,v):
 		self.sp.v+=0.1*v
-		self.sa.v+=0.0005*(p-self.p).prep().dot(v)#moment of inertia is arbitrarily picked
+		self.sa.v+=0.0002*(p-self.p).prep().dot(v)#moment of inertia is arbitrarily picked
 
 import v2
 active_camera=Camera(v2.v2(0,0),v2.v2(0,0))

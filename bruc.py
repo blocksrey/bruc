@@ -111,19 +111,22 @@ def _():
 
 	#print(character.active_character.p)
 
+	ISA,ISD=0,0
 	#the guy & bullets & camera
 	def _(code,mod):
 		key=chr(code)
 		if key==' ':
 			character.active_character.jump()
-		else:
-			character.active_character.fat(key=='d' and 1 or key=='a' and -1 or 0)
+		if key=='d' or key=='a':
+			character.active_character.fat(key=='d' and 1 or key=='a' and -1)
 	on_key_press_caller.connect(_)
 
 	def _(code,mod):
 		key=chr(code)
-		if key!=' ':
-			character.active_character.fat(key=='d' and 0 or key=='a' and 0 or 0)#this is wrong but whatever lol
+		if character.active_character.t.x==1 and key=='d':
+			character.active_character.fat(0)
+		if character.active_character.t.x==-1 and key=='a':
+			character.active_character.fat(0)
 	on_key_release_caller.connect(_)
 
 	def _(mp,code,mod):
@@ -133,6 +136,9 @@ def _():
 		v=200*(s-character.active_character.p).unit()
 		bullet.Bullet(character.active_character.p,v)
 		camera.impulse(character.active_character.p,v)
+
+		pyglet.media.load('sounds/shoot.mp3').play()
+
 		character.active_character.v-=0.05*v
 	on_mouse_press_caller.connect(_)
 
@@ -168,6 +174,8 @@ def _():
 
 		for stepper in steppers:
 			stepper(dt)
+
+		print(character.active_character.t)
 
 	pyglet.clock.schedule(step)
 on_game_start_caller.connect(_)

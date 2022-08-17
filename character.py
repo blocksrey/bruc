@@ -3,6 +3,7 @@ from r2 import r2
 from geometry import Block
 from m2 import push_point,project_point
 from math import sin,pi
+import pyglet
 
 GLOBAL_ACCELERATION=v2(0,-128)
 
@@ -21,6 +22,7 @@ class Character:
 		self.t=null2
 		self.cj=0#this is wrong
 		self.tick=0
+		#self.label=pyglet.text.Label('ASDASDAS',x=400,y=400,anchor_x='center',anchor_y='center')
 
 		#geometry
 		self.block=Block()
@@ -38,14 +40,14 @@ class Character:
 
 		r=0.5
 		l,c=project_point(p)
-		print(p.x==c.x)
+		#print(p.x==c.x)
 		n=null2
 		if l+1e-6<r:
 			n=(p-c).unit()
 			p=c+r*n
-			print('a')
+			#print('a')
 		else:
-			print('ASDAS')
+			pass#print('ASDAS')
 
 		b=p
 		p,v=aero_projectile(p,v.project(n),GLOBAL_ACCELERATION.project(n),0.005,dt)
@@ -67,11 +69,14 @@ class Character:
 		s=sin(2*pi*x)
 		self.block.transform(p+v2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),v2(1,2),self.c,1)#negate the cang input for shougaisha mode
 
+		#self.label.draw()
+
 		#out
 		self.p,self.v=p,v
 
 	def jump(self):
 		if self.cj:
+			pyglet.media.load('sounds/jump.ogg').play()
 			self.cj=0#debounce
 			self.v.y+=36
 

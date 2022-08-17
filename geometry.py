@@ -38,6 +38,9 @@ class Block:
 		block_p.extend( 8*[None])
 		block_c.extend(16*[None])
 
+	def remove():
+		pass
+
 	def __del__(self):
 		return
 		print('del',self)
