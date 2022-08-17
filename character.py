@@ -1,9 +1,8 @@
 from v2 import v2,null2,cang
 from r2 import r2
 from geometry import Block
-from m2 import push_point
+from m2 import push_point,project_point
 from math import sin,pi
-import camera
 
 GLOBAL_ACCELERATION=v2(0,-128)
 
@@ -19,12 +18,9 @@ class Character:
 		#character stuff
 		self.p,self.v=p,v
 		self.c=c
-		self.m=null2
 		self.t=null2
 		self.cj=0#this is wrong
 		self.tick=0
-		self.gv=null2
-		self.n=null2
 
 		#geometry
 		self.block=Block()
@@ -37,27 +33,41 @@ class Character:
 		print('del',self)
 
 	def step(self,dt):
+		#in
 		p,v=self.p,self.v
-		self.tick+=dt
 
-		p+=32*dt*self.t
+		r=0.5
+		l,c=project_point(p)
+		print(p.x==c.x)
+		n=null2
+		if l+1e-6<r:
+			n=(p-c).unit()
+			p=c+r*n
+			print('a')
+		else:
+			print('ASDAS')
+
 		b=p
-		p,v=aero_projectile(p,v,(GLOBAL_ACCELERATION+32*self.t).project(self.n),0.005,dt)
+		p,v=aero_projectile(p,v.project(n),GLOBAL_ACCELERATION.project(n),0.005,dt)
 		d=p-b
-		l=d.norm()
-		h,n=push_point(r2(b,d))
+		r=r2(b,d)
+		h,n=push_point(r)
 
-		if h+1e-6<l:
-			#these are quantitatively the same but numerical stability is vastly different... (unstable one is faster but horrible for shallow angles)
-			#p=b+h/l*d+1e-6*n
-			p=b+(h-1e-6)/l*d
+		#if n.dot(v2(0,1))>0.7:
+
+		if h+1e-6<r.l:
+			#these are quantitatively similar but numerical stability is vastly different... (unstable one is faster but horrible for shallow angles)
+			p=b+h/r.l*d+1e-6*n
+			#p=b+(h-1e-6)/r.l*d
 			v=v.project(n)
 
 		#animate
+		self.tick+=dt
 		x=2*self.tick%1
 		s=sin(2*pi*x)
 		self.block.transform(p+v2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),v2(1,2),self.c,1)#negate the cang input for shougaisha mode
 
+		#out
 		self.p,self.v=p,v
 
 	def jump(self):

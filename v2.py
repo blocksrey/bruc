@@ -32,6 +32,9 @@ class v2(v):
 	def dot(a,b):
 		return a.x*b.x+a.y*b.y
 
+	def square(a):
+		return a.x*a.x+a.y*a.y
+
 	def norm(a):
 		return sqrt(a.x*a.x+a.y*a.y)
 

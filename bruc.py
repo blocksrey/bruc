@@ -93,7 +93,7 @@ from caller import Caller
 on_game_start_caller=Caller()
 
 def _():
-	import menu
+	#import menu
 	from v2 import v2,null2,cang
 	from v3 import v3
 	from math import atan2,tan,pi
@@ -109,7 +109,7 @@ def _():
 	the_map=Map('maps/map0.bm')
 	character.Character(spawns[int(len(spawns)*random())],null2,v3(*calc_skin_color(random()))).use()
 
-	print(character.active_character.p)
+	#print(character.active_character.p)
 
 	#the guy & bullets & camera
 	def _(code,mod):
@@ -129,7 +129,7 @@ def _():
 	def _(mp,code,mod):
 		w=v2(the_window.width,the_window.height)
 		s=camera.active_camera.p+camera.active_camera.d/w.y*(2*mp-w)
-		print(character.active_character.p)
+		#print(character.active_character.p)
 		v=200*(s-character.active_character.p).unit()
 		bullet.Bullet(character.active_character.p,v)
 		camera.impulse(character.active_character.p,v)

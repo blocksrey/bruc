@@ -32,11 +32,11 @@ class Bullet:
 		p,v=aero_projectile(p,v,GLOBAL_ACCELERATION,0.005,dt)
 
 		d=p-b
-		h,n=push_point(r2(b,d))
+		r=r2(b,d)
+		h,n=push_point(r)
 
-		l=d.norm()
-		if h+1e-6<l:
-			p=b+(h-1e-6)/l*d
+		if h+1e-6<r.l:
+			p=b+(h-1e-6)/r.l*d
 			camera.impulse(p,v)#cam gets some of the energy
 			v=0.5*v.reflect(n)#energy reduction
 

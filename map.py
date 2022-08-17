@@ -39,11 +39,10 @@ class Map:
 
 					if ch=='-':
 						Collidable(p+0.5*s+v2(0,0.45*s.y),cang(0),v2(s.x,0.1*s.y),char_c[ch],1)
+					elif ch=='P':
+						spawns.append(p+0.5*s)
 					elif ch!=' ':#newline case is handled naturally :P:P
 						Collidable(p+0.5*s,cang(0),s,char_c[ch],1)
-
-					if ch=='P':
-						spawns.append(p+0.5*s)
 
 					ix=ix1
 					ch=ch1

@@ -1,56 +1,99 @@
 from v2 import v2,null2
 from r2 import r2
 from sorter import Sorter
-from math import atan2
+from math import atan2,inf,sqrt
+from spacer import Spacer
 
 index=0
 rays=[]
+racer=Spacer()
 
 class m2:
-	def __init__(self,l):
+	def __init__(m,l):
 		global index
-		self.i=l*index
+		m.i=l*index
 		index+=1
 		rays.extend(l*[None])
 
-	def build_rays(self,v):
-		i=self.i
+	def build_rays(m,v):
+		i=m.i
 		n=len(v)-1
 		for o in range(n):#maybe this is n
 			rays[i+o]=r2(v[o],v[o+1]-v[o])
 		rays[i+n]=r2(v[n],v[0]-v[n])
 
-	def update_vertices(self,verts):
+	def update_vertices(m,vt):
 		hx,hy=0,0
 		lx,ly=0,0
 
 		sorter=Sorter()
 
-		c=verts[0]
+		c=vt[0]
 
-		for v in verts:
+		for v in vt:
 			hx,hy=max(hx,v.x),max(hy,v.y)
 			lx,ly=min(lx,v.x),min(ly,v.y)
 
 			sorter.set(atan2(v.y-c.y,v.x-c.x),v)
 
-		self.h=v2(hx,hy)
-		self.l=v2(lx,ly)
+		m.s=v2(lx,ly)
+		m.e=v2(hx,hy)-m.s
 
-		self.build_rays(sorter.sorted)
+		m.build_rays(sorter.sorted)
 
-	def get_aabb(self):
-		return self.h,self.l
+	def get_aabb(m):
+		return m.s,m.e
 
 def push_point(r0):
-	fh=r0.l
+	fl=r0.l
 	fn=null2
 
 	for r1 in rays:
 		h,n=r0.push_point(r1)
 
-		if h<fh:
-			fh=h
+		if fl>h:
+			fl=h
 			fn=n
 
-	return fh,fn
+	return fl,fn
+
+def project_point(v):
+	fl=inf
+	fp=null2
+
+	for r in rays:
+		p=r.project_point(v)
+		d=(v-p).square()
+
+		if fl*fl>d:
+			fl=d
+			fp=p
+
+	return sqrt(fl),fp
+
+#def push_point(r):
+#	fl=r.l
+#	fn=null2
+#
+#	for y in racer.from_aabb(r.get_aabb()):
+#		h,n=r.push_point(y)
+#
+#		if fl>h:
+#			fl=h
+#			fn=n
+#
+#	return fl,fn
+#
+#def project_point(v):
+#	fl=inf
+#	fp=null2
+#
+#	for r in racer.from_point(v):
+#		p=r.project_point(v)
+#		d=(v-p).square()
+#
+#		if fl*fl>d:
+#			fl=d
+#			fp=p
+#
+#	return sqrt(fl),fp
