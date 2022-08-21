@@ -40,8 +40,6 @@ if RELEASE:
 
 
 
-
-
 def hsv(h,s,v):
 	c=v*s
 	m=v-c
@@ -94,8 +92,8 @@ on_game_start_caller=Caller()
 
 def _():
 	#import menu
-	from v2 import v2,null2,cang
-	from v3 import v3
+	from v2 import V2,null2,cang
+	from v3 import V3
 	from math import atan2,tan,pi
 	from random import random
 	import character
@@ -104,46 +102,58 @@ def _():
 	import camera
 	from map import Map,spawns
 
-	GLOBAL_ACCELERATION=v2(0,-128)
 
-	the_map=Map('maps/map0.bm')
-	character.Character(spawns[int(len(spawns)*random())],null2,v3(*calc_skin_color(random()))).use()
 
-	#print(character.active_character.p)
+
+
+	import network
+	network.client()
+
+
+
+
+
+	Map('maps/map0.bm')
+	camera.Camera(null2,null2).use()
+	char=character.Character(spawns[int(len(spawns)*random())],null2,V3(*calc_skin_color(random())))
+	char.use()
+	#network.send('newcharacter',char)
 
 	ISA,ISD=0,0
 	#the guy & bullets & camera
 	def _(code,mod):
 		key=chr(code)
 		if key==' ':
-			character.active_character.jump()
+			character.the_character.jump()
 		if key=='d' or key=='a':
-			character.active_character.fat(key=='d' and 1 or key=='a' and -1)
+			character.the_character.fat(key=='d' and 1 or key=='a' and -1)
 	on_key_press_caller.connect(_)
 
 	def _(code,mod):
 		key=chr(code)
-		if character.active_character.t.x==1 and key=='d':
-			character.active_character.fat(0)
-		if character.active_character.t.x==-1 and key=='a':
-			character.active_character.fat(0)
+		if character.the_character.t.x==1 and key=='d':
+			character.the_character.fat(0)
+		if character.the_character.t.x==-1 and key=='a':
+			character.the_character.fat(0)
 	on_key_release_caller.connect(_)
 
+
 	def _(mp,code,mod):
-		w=v2(the_window.width,the_window.height)
-		s=camera.active_camera.p+camera.active_camera.d/w.y*(2*mp-w)
-		#print(character.active_character.p)
-		v=200*(s-character.active_character.p).unit()
-		bullet.Bullet(character.active_character.p,v)
-		camera.impulse(character.active_character.p,v)
+		w=V2(the_window.width,the_window.height)
+		s=camera.the_camera.p+camera.the_camera.d/w.y*(2*mp-w)
+		#print(character.the_character.p)
+		v=200*(s-character.the_character.p).unit()
+		bullet.Bullet(character.the_character.p,v)
+		network.send('newbullet',character.the_character.p,v)
+		camera.impulse(character.the_character.p,v)
 
 		pyglet.media.load('sounds/shoot.mp3').play()
 
-		character.active_character.v-=0.05*v
+		character.the_character.v-=0.05*v
 	on_mouse_press_caller.connect(_)
 
 	def _(mp,d):
-		camera.active_camera.d+=2*d.y
+		camera.the_camera.d+=2*d.y
 	on_mouse_scroll_caller.connect(_)
 
 	def _():
@@ -155,8 +165,6 @@ def _():
 
 		glMatrixMode(GL_MODELVIEW)
 		glLoadIdentity()
-
-		#label.draw()
 	on_draw_caller.connect(_)
 
 	def _(ws):
@@ -170,12 +178,8 @@ def _():
 	]
 
 	def step(dt):
-		dt=max(1e-6,dt)#this isnt so nice
-
 		for stepper in steppers:
 			stepper(dt)
-
-		print(character.active_character.t)
 
 	pyglet.clock.schedule(step)
 on_game_start_caller.connect(_)

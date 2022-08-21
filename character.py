@@ -1,16 +1,12 @@
-from v2 import v2,null2,cang
-from r2 import r2
+from v2 import V2,null2,cang
+from r2 import R2
 from geometry import Block
 from m2 import push_point,project_point
 from math import sin,pi
 import pyglet
-
-GLOBAL_ACCELERATION=v2(0,-128)
-
-#projectile with drag (only accurate for small t)
-def aero_projectile(p,v,g,k,t):
-	a=g-k*v.norm()*v#global acceleration+drag
-	return p+t*v+0.5*t*t*a,v+t*a#p(t),p'(t)
+from v3 import null3
+from caller import Caller
+from shared import *
 
 characters=[]
 
@@ -52,10 +48,10 @@ class Character:
 		b=p
 		p,v=aero_projectile(p,v.project(n),GLOBAL_ACCELERATION.project(n),0.005,dt)
 		d=p-b
-		r=r2(b,d)
+		r=R2(b,d)
 		h,n=push_point(r)
 
-		#if n.dot(v2(0,1))>0.7:
+		#if n.dot(V2(0,1))>0.7:
 
 		if h+1e-6<r.l:
 			#these are quantitatively similar but numerical stability is vastly different... (unstable one is faster but horrible for shallow angles)
@@ -67,7 +63,7 @@ class Character:
 		self.tick+=dt
 		x=2*self.tick%1
 		s=sin(2*pi*x)
-		self.block.transform(p+v2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),v2(1,2),self.c,1)#negate the cang input for shougaisha mode
+		self.block.transform(p+V2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),V2(1,2),self.c,1)#negate the cang input for shougaisha mode
 
 		#self.label.draw()
 
@@ -81,12 +77,15 @@ class Character:
 			self.v.y+=36
 
 	def fat(self,t):
-		self.t=v2(t,0)
+		self.t=V2(t,0)
 
 	def use(self):
-		global active_character
-		active_character=self
+		global the_character
+		the_character=self
 		print('use character',self)
+
+	def unuse(self):
+		pass
 
 def step(dt):
 	for character in characters:

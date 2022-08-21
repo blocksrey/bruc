@@ -4,13 +4,13 @@ def proj(a,b,i,j):
 		return a+(b-a).dot(j)/ij*i
 	return a+i
 
-class r2:
+class R2:
 	def __init__(a,o,d):
 		l=d.norm()
 		a.o,a.u,a.l=o,l and d/l or d,l
 
 	def __repr__(a):
-		return 'r2({},{})'.format(a.o,a.u)
+		return 'R2({},{})'.format(a.o,a.u)
 
 	def push_point(a,b):
 		p=proj(a.o,b.o,a.l*a.u,b.u.perp())

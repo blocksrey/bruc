@@ -1,7 +1,6 @@
-from json import loads,dumps#this works for now :/
+from pickle import loads,dumps#this shit is slow and needs to change
 
-def serialize(stuff):
-	return dumps(stuff).encode()
+def serialize(*whatever):
+	return dumps(whatever)
 
-def deserialize(cantread):
-	return loads(cantread.decode())
+deserialize=loads

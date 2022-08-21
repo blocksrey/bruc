@@ -1,27 +1,27 @@
 from math import sqrt
-from v import v
+from v import V
 
-class v3(v):
+class V3(V):
 	def __init__(a,x,y,z):
 		a.x,a.y,a.z=x,y,z
 
 	def __repr__(a):
-		return 'v3({},{},{})'.format(a.x,a.y,a.z)
+		return 'V3({},{},{})'.format(a.x,a.y,a.z)
 
 	def __add__(a,b):
-		return v3(a.x+b.x,a.y+b.y,a.z+b.z)
+		return V3(a.x+b.x,a.y+b.y,a.z+b.z)
 
 	def __sub__(a,b):
-		return v3(a.x-b.x,a.y-b.y,a.z-b.z)
+		return V3(a.x-b.x,a.y-b.y,a.z-b.z)
 
 	def __rmul__(a,b):
-		return isinstance(b,v3) and v3(a.x*b.x,a.y*b.y,a.z*b.z) or v3(a.x*b,a.y*b,a.z*b)
+		return isinstance(b,V3) and V3(a.x*b.x,a.y*b.y,a.z*b.z) or V3(a.x*b,a.y*b,a.z*b)
 
 	def __truediv__(a,b):#wtf
-		return isinstance(b,v3) and v3(a.x/b.x,a.y/b.y,a.z/b.z) or v3(a.x/b,a.y/b,a.z/b)
+		return isinstance(b,V3) and V3(a.x/b.x,a.y/b.y,a.z/b.z) or V3(a.x/b,a.y/b,a.z/b)
 
 	def __neg__(a):
-		return v3(-a.x,-a.y,-a.z)
+		return V3(-a.x,-a.y,-a.z)
 
 	def dot(a,b):
 		return a.x*b.x+a.y*b.y+a.z*b.z
@@ -31,6 +31,6 @@ class v3(v):
 
 	def unit(a):
 		l=sqrt(a.x*a.x+a.y*a.y+a.z*a.z)
-		return v2(a.x/l,a.y/l,a.z/l)
+		return V2(a.x/l,a.y/l,a.z/l)
 
-null3=v3(0,0,0)
+null3=V3(0,0,0)

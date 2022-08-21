@@ -1,5 +1,5 @@
-from v2 import v2,null2
-from r2 import r2
+from v2 import V2,null2
+from r2 import R2
 from sorter import Sorter
 from math import atan2,inf,sqrt
 from spacer import Spacer
@@ -8,7 +8,7 @@ index=0
 rays=[]
 racer=Spacer()
 
-class m2:
+class M2:
 	def __init__(m,l):
 		global index
 		m.i=l*index
@@ -19,8 +19,8 @@ class m2:
 		i=m.i
 		n=len(v)-1
 		for o in range(n):#maybe this is n
-			rays[i+o]=r2(v[o],v[o+1]-v[o])
-		rays[i+n]=r2(v[n],v[0]-v[n])
+			rays[i+o]=R2(v[o],v[o+1]-v[o])
+		rays[i+n]=R2(v[n],v[0]-v[n])
 
 	def update_vertices(m,vt):
 		hx,hy=0,0
@@ -36,8 +36,8 @@ class m2:
 
 			sorter.set(atan2(v.y-c.y,v.x-c.x),v)
 
-		m.s=v2(lx,ly)
-		m.e=v2(hx,hy)-m.s
+		m.s=V2(lx,ly)
+		m.e=V2(hx,hy)-m.s
 
 		m.build_rays(sorter.sorted)
 
