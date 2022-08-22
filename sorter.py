@@ -14,12 +14,12 @@ class Sorter:
 			self.v[s]=v
 			self.sort()#update state :L (even if it doesn't need to be updated)
 
-		def 消():
+		def remove():
 			self.s.remove(s)
 			del self.v[s]
 			self.sort()#update state :L (even if it doesn't need to be updated)
 
-		return 消
+		return remove
 
 	def sort(self):
 		self.s.sort()

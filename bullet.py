@@ -42,9 +42,10 @@ class Bullet:
 		h,n=push_point(r)
 
 		if h+1e-6<r.l:
-			the_sound=pyglet.media.load('sounds/bump.wav').play()
-			the_sound.volume=v.norm()/100
-			the_sound.pitch=1.5+0.002*v.norm()
+			if v.square()>1:
+				the_sound=pyglet.media.load('sounds/bump.wav').play()
+				the_sound.volume=v.norm()/100
+				the_sound.pitch=1.5+0.002*v.norm()
 
 			p=b+(h-1e-6)/r.l*d
 			camera.impulse(p,v)#cam gets some of the energy

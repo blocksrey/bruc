@@ -109,7 +109,7 @@ def _():
 
 	def handler(signum,frame):
 		#print('Signal handler called with signal',signum)
-		exit(1)
+		exit(0)
 
 	# Set the signal handler
 	signal.signal(signal.SIGINT,handler)
