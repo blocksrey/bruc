@@ -17,7 +17,7 @@ RELEASE=0
 if RELEASE:
 	import gc
 	gc.disable()#no garbage collection
-	pyglet.options['debug_gl']=False#no debug
+	pyglet.options['debug_gl']=False#optimizations (unstable)
 
 
 
@@ -105,7 +105,14 @@ def _():
 
 
 
+	import signal,os
 
+	def handler(signum,frame):
+		#print('Signal handler called with signal',signum)
+		exit(1)
+
+	# Set the signal handler
+	signal.signal(signal.SIGINT,handler)
 
 	import network
 	network.client()
@@ -143,8 +150,8 @@ def _():
 		s=camera.the_camera.p+camera.the_camera.d/w.y*(2*mp-w)
 		frm=character.the_character.p+V2(0,2)
 		v=100*(s-frm).unit()
-		pyglet.media.load('sounds/shoot.mp3').play()
-		#character.the_character.hurt(V3(0,50,0))
+		pyglet.media.load('sounds/shoot.mp3').play().pitch=0.95+0.1*random()
+		#character.the_character.impulse(V3(0,50,0))
 		character.the_character.v-=0.05*v
 		camera.impulse(frm,v)
 
@@ -182,7 +189,11 @@ def _():
 		camera.step
 	]
 
+	import threading
+
 	def step(dt):
+		#print(threading.active_count())
+
 		for stepper in steppers:
 			stepper(dt)
 

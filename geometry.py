@@ -123,8 +123,8 @@ if VAO_MODE:
 
 		#glClearColor(0,0,0,1)
 
-		for char in character.characters:
-			char.label.draw()
+		#for char in character.characters:
+		#	char.label.draw()
 else:
 	from math import tan,pi,atan2
 
@@ -160,5 +160,5 @@ else:
 		draw_block()
 		glEnd()
 
-		for char in character.characters:
-			char.label.draw()
+		#for char in character.characters:
+		#	char.label.draw()

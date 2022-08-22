@@ -27,10 +27,10 @@ class Character:
 		self.tick=0
 
 		self.name='bonnnaa'
-		self.label=pyglet.text.Label(self.name,font_size=16,x=0,y=0,anchor_x='center',anchor_y='center')
+		#self.label=pyglet.text.Label(self.name,font_size=16,x=0,y=0,anchor_x='center',anchor_y='center')
 
 		self.health=1
-		self.hurt_time=100000000
+		self.impulse_time=100000000
 
 		#geometry
 		self.block=Block()
@@ -78,8 +78,8 @@ class Character:
 
 		c0=self.c
 
-		self.hurt_time+=dt
-		self.block.transform(p+V2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),V2(1,2),c0+(V3(1,0,0)-c0)/(self.hurt_time*30),1)#negate the cang input for shougaisha mode
+		self.impulse_time+=dt
+		self.block.transform(p+V2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),V2(1,2),c0+(V3(1,0,0)-c0)/(self.impulse_time*30),1)#negate the cang input for shougaisha mode
 
 		#self.label.draw()
 
@@ -95,17 +95,19 @@ class Character:
 	def fat(self,t):
 		self.t=V2(t,0)
 
-	def hurt(self,impact):
+	def impulse(self,impact):
 		self.v+=impact
-		self.health-=1e-4*impact.square()#lmao
-		self.hurt_time=0
+		dd=impact.square()
+		if dd>14:
+			self.health-=1e-4*dd#lmao
+			self.impulse_time=0
 
-		oto=pyglet.media.load('sounds/hurt'+str(int(3*random()))+'.mp3').play()
-		oto.pitch=0.9+0.1*random()
+			oto=pyglet.media.load('sounds/hurt'+str(int(3*random()))+'.mp3').play()
+			oto.pitch=0.9+0.1*random()
 
-		if self.health<=0:
-			print(self,'dead')
-			return 1
+			if self.health<=0:
+				print(self,'dead')
+				return 1
 
 	def use(self):
 		global the_character

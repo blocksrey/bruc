@@ -21,6 +21,8 @@ char_c['W']=V3(8,189,189)/255
 
 char_c['P']=V3(0,0,0.2)
 
+char_c['K']=V3(1,0,0)
+
 class Map:
 	def __init__(self,path):
 		iy=0

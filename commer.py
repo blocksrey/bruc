@@ -23,7 +23,9 @@ class Commer:
 			del self.socks[ソケット]
 			ソケット.close()
 
-		Thread(target=入).start()
+		a=Thread(target=入)
+		a.start()
+		#print(a.is_alive())
 
 	def send(self,*whatever):#this is definitely faster than send if youre connected to multiple sockets
 		bytes=serialize(*whatever)#tuple unpacking is wrong here because its wrong in serializer (this is living proof that wrong creates more wrong)
