@@ -6,6 +6,7 @@ import camera
 from v2 import V2
 from m2 import M2
 from time import time
+import character
 
 block_l=0
 block_p=[]
@@ -62,6 +63,7 @@ if VAO_MODE:
 		Shader('shaders/blockf.glsl',GL_FRAGMENT_SHADER)
 	)
 
+	block_time_uniform=glGetUniformLocation(block_program.id,b'time')
 	block_camd_uniform=glGetUniformLocation(block_program.id,b'camd')
 	block_camp_uniform=glGetUniformLocation(block_program.id,b'camp')
 	block_camo_uniform=glGetUniformLocation(block_program.id,b'camo')
@@ -97,11 +99,13 @@ if VAO_MODE:
 	time0 = time()
 
 	def draw_scene():
+		elapsed=time()-time0
+
 		glClear(GL_COLOR_BUFFER_BIT)#can't make this assumption (i want better state management)
 
 		#render background
 		glUseProgram(background_program.id)
-		glUniform1f(background_time_uniform,time() - time0)
+		glUniform1f(background_time_uniform,elapsed)
 		glUniform1f(background_camd_uniform,camera.the_camera.d)
 		glUniform2f(background_camp_uniform,camera.the_camera.p.x,camera.the_camera.p.y)
 		glUniform2f(background_camo_uniform,camera.the_camera.o.x,camera.the_camera.o.y)
@@ -109,10 +113,18 @@ if VAO_MODE:
 
 		#render block
 		glUseProgram(block_program.id)
+		glUniform1f(block_time_uniform,elapsed)
 		glUniform1f(block_camd_uniform,camera.the_camera.d)
 		glUniform2f(block_camp_uniform,camera.the_camera.p.x,camera.the_camera.p.y)
 		glUniform2f(block_camo_uniform,camera.the_camera.o.x,camera.the_camera.o.y)
 		draw_block()
+
+		#glUseProgram(0)
+
+		#glClearColor(0,0,0,1)
+
+		for char in character.characters:
+			char.label.draw()
 else:
 	from math import tan,pi,atan2
 
@@ -132,6 +144,8 @@ else:
 			glVertex2f(block_p[i8+4],block_p[i8+5])
 			glVertex2f(block_p[i8+6],block_p[i8+7])
 
+	glClearColor(0.5,0.5,1,1)
+
 	def draw_scene():
 		glClear(GL_COLOR_BUFFER_BIT)
 
@@ -145,3 +159,6 @@ else:
 		glBegin(GL_QUADS)
 		draw_block()
 		glEnd()
+
+		for char in character.characters:
+			char.label.draw()

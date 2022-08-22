@@ -99,6 +99,7 @@ def _():
 	import character
 	from geometry import draw_scene
 	import bullet
+	import bomb
 	import camera
 	from map import Map,spawns
 
@@ -137,19 +138,22 @@ def _():
 			character.the_character.fat(0)
 	on_key_release_caller.connect(_)
 
-
 	def _(mp,code,mod):
 		w=V2(the_window.width,the_window.height)
 		s=camera.the_camera.p+camera.the_camera.d/w.y*(2*mp-w)
-		#print(character.the_character.p)
-		v=200*(s-character.the_character.p).unit()
-		bullet.Bullet(character.the_character.p,v)
-		network.send('newbullet',character.the_character.p,v)
-		camera.impulse(character.the_character.p,v)
-
+		frm=character.the_character.p+V2(0,2)
+		v=100*(s-frm).unit()
 		pyglet.media.load('sounds/shoot.mp3').play()
-
+		#character.the_character.hurt(V3(0,50,0))
 		character.the_character.v-=0.05*v
+		camera.impulse(frm,v)
+
+		if code==1:
+			bullet.Bullet(frm,v)
+			network.send('newbullet',frm,v)
+		elif code==4:
+			bomb.Bomb(frm,0.5*v)
+
 	on_mouse_press_caller.connect(_)
 
 	def _(mp,d):
@@ -174,6 +178,7 @@ def _():
 	steppers=[
 		character.step,
 		bullet.step,
+		bomb.step,
 		camera.step
 	]
 

@@ -5,8 +5,14 @@ from v3 import V3
 from r2 import R2
 from math import pi
 import camera
-from shared import *
 import pyglet
+
+GLOBAL_ACCELERATION=V2(0,-96)
+
+#projectile with drag (only accurate for small t)
+def aero_projectile(p,v,g,k,t):
+	a=g#-k*v.norm()*v#global acceleration+drag
+	return p+t*v+0.5*t*t*a,v+t*a#p(t),p'(t)
 
 bullets=[]
 
@@ -49,7 +55,7 @@ class Bullet:
 		d=p-b
 		h=0.5
 		w=d.norm() or h#lol
-		self.block.transform(p+0.5*d,d/w,V2(h+w,h),V3(1,0.5,0.5),(2)*0.5*pi*h/(0.5*pi*h+2*w))
+		self.block.transform(p+0.5*d,d/w,V2(h+w,h),V3(1,0,0),(2)*0.5*pi*h/(0.5*pi*h+2*w))
 
 		self.p,self.v=p,v
 

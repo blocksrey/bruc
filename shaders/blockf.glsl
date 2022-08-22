@@ -3,12 +3,9 @@
 #extension GL_ARB_separate_shader_objects:enable
 
 in vec2 pos1;
-layout (location=1) in vec4 col0;
-layout (location=0) out vec4 col1;
+layout (location=1) in vec4 col1;
 
-float hash(vec2 co){
-	return fract(sin(dot(co.xy,vec2(12.9898,78.233)))*43758.5453);
-}
+layout (location=0) out vec4 col2;
 
 vec2 GetGradient(vec2 intPos,float t){
 	float hash=fract(sin(dot(intPos,vec2(12.9898,78.233)))*43758.5453);
@@ -40,7 +37,7 @@ float Pseudo3dNoise(vec3 pos){
 void main(){
 	vec2 char_pos=vec2(0.5,0.25)*pos1+0.5;
 	vec2 to_edge=char_pos-round(char_pos);
-	col1=col0;
-	col1.rgb+=0.04*Pseudo3dNoise(vec3(8*pos1,0));
-	col1.rgb*=1-0.3*dot(to_edge,to_edge);
+	col2=col1;
+	col2.rgb+=0.04*Pseudo3dNoise(vec3(8*pos1,0));
+	col2.rgb*=1-0.3*dot(to_edge,to_edge);
 }

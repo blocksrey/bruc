@@ -4,9 +4,16 @@ from geometry import Block
 from m2 import push_point,project_point
 from math import sin,pi
 import pyglet
-from v3 import null3
+from v3 import V3,null3
 from caller import Caller
-from shared import *
+from random import random
+
+GLOBAL_ACCELERATION=V2(0,-150)
+
+#projectile with drag (only accurate for small t)
+def aero_projectile(p,v,g,k,t):
+	a=g#-k*v.norm()*v#global acceleration+drag
+	return p+t*v+0.5*t*t*a,v+t*a#p(t),p'(t)
 
 characters=[]
 
@@ -18,7 +25,12 @@ class Character:
 		self.t=null2
 		self.cj=0#this is wrong
 		self.tick=0
-		#self.label=pyglet.text.Label('ASDASDAS',x=400,y=400,anchor_x='center',anchor_y='center')
+
+		self.name='bonnnaa'
+		self.label=pyglet.text.Label(self.name,font_size=16,x=0,y=0,anchor_x='center',anchor_y='center')
+
+		self.health=1
+		self.hurt_time=100000000
 
 		#geometry
 		self.block=Block()
@@ -63,7 +75,11 @@ class Character:
 		self.tick+=dt
 		x=2*self.tick%1
 		s=sin(2*pi*x)
-		self.block.transform(p+V2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),V2(1,2),self.c,1)#negate the cang input for shougaisha mode
+
+		c0=self.c
+
+		self.hurt_time+=dt
+		self.block.transform(p+V2(abs(1-2*x)-0.5,1+abs(s)),cang(0.3*s),V2(1,2),c0+(V3(1,0,0)-c0)/(self.hurt_time*30),1)#negate the cang input for shougaisha mode
 
 		#self.label.draw()
 
@@ -78,6 +94,18 @@ class Character:
 
 	def fat(self,t):
 		self.t=V2(t,0)
+
+	def hurt(self,impact):
+		self.v+=impact
+		self.health-=1e-4*impact.square()#lmao
+		self.hurt_time=0
+
+		oto=pyglet.media.load('sounds/hurt'+str(int(3*random()))+'.mp3').play()
+		oto.pitch=0.9+0.1*random()
+
+		if self.health<=0:
+			print(self,'dead')
+			return 1
 
 	def use(self):
 		global the_character

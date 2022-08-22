@@ -2,7 +2,7 @@ from pyglet.window import Window
 from caller import Caller
 from v2 import V2
 
-the_window=Window(4*222,4*173,'bruc')#easter egg much?
+the_window=Window(222,173,'bruc',1)#easter egg much?
 
 on_key_press_caller=Caller()
 @the_window.event

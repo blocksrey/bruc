@@ -3,28 +3,22 @@
 #extension GL_ARB_separate_shader_objects:enable
 
 uniform vec2 wins;
-uniform float time;
-uniform float camd;
+uniform float camd,time;
 
 in vec2 fragCoord;
-in vec2 pos1;
 
 layout (location=0) out vec4 col1;
 
 const float speed=0.02;
-const float clouddark=0.5;
-const float cloudlight=0.3;
-const float cloudcover=0.2;
-const float cloudalpha=8;
-const float skytint=0.5;
-const vec3 skycolor1=vec3(0.2,0.4,0.6);
-const vec3 skycolor2=vec3(0.4,0.7,1);
+const float cloudcover=0.5;
+const vec3 skycolor1=vec3(0,0,0.3);
+const vec3 skycolor2=vec3(0.1,0.4,0.8);
 
-const mat2 m=mat2(1.6,1.2,-1.2,1.6);
+const mat2 m=mat2(1.69,1.21,-1.23,1.62);
 
 vec2 hash(vec2 p){
 	p=vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3)));
-	return -1+2*fract(sin(p)*43758.5453123);
+	return 2*fract(sin(p)*43758.5453123)-1;
 }
 
 float noise(vec2 p){
@@ -51,11 +45,10 @@ float fbm(vec2 n){
 }
 
 void main(){
-	float cloudscale=0.5+0.002*camd;//this isnt fucking 'cloud scale'
+	float cloudscale=0.2+0.0005*camd;//this isnt fucking 'cloud scale'
 
-	vec2 aspect2=vec2(wins.x/wins.y,1);
 	vec2 p=fragCoord/wins;
-	vec2 uv=p*aspect2;
+	vec2 uv=p;
 	float tim=time*speed;
 	float q=fbm(uv*cloudscale*0.5);
 
@@ -70,40 +63,13 @@ void main(){
 		uv=m*uv+tim;
 		weight*=0.7;
 	}
-	//*/
-
-	float f=0;
-	/*noise shape
-	uv=p*aspect2;
-	uv*=cloudscale;
-	uv-=q-tim;
-	weight=0.7;
-	for (int i=4;--i>=0;){
-		f+=weight*noise(uv);
-		uv=m*uv+tim;
-		weight*=0.6;
-	}
-	f*=r+f;
-	//*/
 
 	float c=0;
-	/*noise color
-	tim=time*speed*2;
-	uv=p*aspect2;
-	uv*=cloudscale*2;
-	uv-=q-tim;
-	weight=0.4;
-	for (int i=4;--i>=0;){
-		c+=weight*noise(uv);
-		uv=m*uv+tim;
-		weight*=0.6;
-	}
-	//*/
 
 	float c1=0;
 	//*noise ridge color
 	tim=time*speed*3;
-	uv=p*aspect2;
+	uv=p;
 	uv*=cloudscale*3;
 	uv-=q-tim;
 	weight=0.4;
@@ -117,11 +83,9 @@ void main(){
 	c+=c1;
 
 	vec3 skycolor=mix(skycolor2,skycolor1,p.y);
-	vec3 cloudcolor=vec3(1.1,1.1,0.9)*clamp((clouddark+cloudlight*c),0,1);
+	vec3 cloudcolor=vec3(1.1,1.1,0.9)*clamp((1+2*c),0,1);
 
-	f=cloudcover+cloudalpha*f*r;
-
-	vec3 result=mix(skycolor,clamp(skytint*skycolor+cloudcolor,0,1),clamp(f+c,0,1));
+	vec3 result=mix(skycolor,clamp(skycolor+cloudcolor,0,1),clamp(cloudcover+c,0,1));
 
 	col1=vec4(result,1);
 }
