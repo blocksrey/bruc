@@ -15,9 +15,12 @@ class Commer:
 		def start():
 			self.socks[socket]=None
 			self.on_connect.fire(socket)
-
-			while byte:=socket.recv(BUFFER_SIZE):
+			
+			while 1:
+				byte:=socket.recv(BUFFER_SIZE)
 				self.on_receive.fire(socket,*deserialize(byte))#tuple unpacking is wrong here because its wrong in serializer (this is living proof that wrong creates more wrong)
+				if not byte:
+					break
 
 			self.on_close.fire(socket)
 			del self.socks[socket]
